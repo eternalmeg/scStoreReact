@@ -1,0 +1,52 @@
+# ============================
+# Node Modules
+# ============================
+client/node_modules/
+server/node_modules/
+node_modules/
+
+# ============================
+# Build Output
+# ============================
+client/dist/
+server/dist/
+dist/
+
+# ============================
+# Logs
+# ============================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============================
+# IDEs and Editors
+# ============================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ============================
+# System Files
+# ============================
+.DS_Store
+Thumbs.db
+
+# ============================
+# Environment Files
+# ============================
+.env
+.env.local
+.env.development
+.env.production
+
+# ============================
+# Temporary / Cache
+# ============================
+.tmp/
+.cache/
+.angular/
+.sass-cache/
+history/
