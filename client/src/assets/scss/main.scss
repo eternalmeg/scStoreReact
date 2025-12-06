@@ -1,0 +1,19 @@
+@import "./main/variable";
+@import "./main/breakpoints";
+@import "./main/mixins";
+
+@import "./main/global";
+
+@import "./header";
+@import "./footer";
+@import "./home";
+@import "./login";
+@import "./main/components";
+@import "./main/utils";
+
+main {
+  min-height: 60vh;
+}
+
+
+

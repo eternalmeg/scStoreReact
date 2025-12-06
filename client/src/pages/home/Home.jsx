@@ -1,0 +1,115 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/autoplay";
+
+
+const Home = () => {
+    return (
+        <div>
+            <section className="fz-5-banner-section fz-5-banner-slider">
+                <Swiper autoplay={true} loop={true} modules={[Autoplay]}>
+                    <SwiperSlide className="fz-5-banner-slider-1">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <div className="fz-5-banner-txt">
+                                        <h3>Sc Store</h3>
+                                        <h1>Right place for you</h1>
+                                        <Link to="/shop-2" className="fz-5-def-btn">
+                                            Catalog
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                    <SwiperSlide className="fz-5-banner-slider-2">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <div className="fz-5-banner-txt">
+                                        <h3>Sc Store</h3>
+                                        <h1>Find what you need</h1>
+                                        <Link to="/shop-2" className="fz-5-def-btn">
+                                            Shop Now
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                    <SwiperSlide className="fz-5-banner-slider-3">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <div className="fz-5-banner-txt">
+                                        <h3>Sc Store</h3>
+                                        <h1>Find best offer</h1>
+                                        <Link to="/shop-2" className="fz-5-def-btn">
+                                            Shop Now
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                </Swiper>
+            </section>
+
+            <section className="fz-5-product pt-120 pb-120">
+                <div className="container">
+                    <div className="row g-xl-4 g-lg-3 g-4">
+                        <div className="col-12">
+                            <div className="row g-xl-4 g-lg-3 g-2">
+                                <div className="col-lg-3 col-md-4 col-6">
+                                    <div className="fz-5-product-title-box">
+                                        <h3>Latest offers</h3>
+                                        <p>
+                                            Check our latest offers or see all amazing products.
+                                        </p>
+                                        <Link to="/shop-2" className="fz-5-def-btn-2">
+                                            View Catalog
+                                        </Link>
+                                    </div>
+                                </div>
+                                <div className="col-lg-3 col-md-4 col-6">
+                                    <div className="fz-5-single-product">
+                                        <div className="fz-5-single-product-img">
+                                            <img src="/assets/images/home3.webp" alt="Image"/>
+
+                                        </div>
+                                        <div className="fz-5-single-product-txt">
+                                            <div className="color-available">
+                                                <span className="color-1"></span>
+                                                <span className="color-2"></span>
+                                                <span className="color-3"></span>
+                                            </div>
+                                            <h3 className="fz-5-single-product-title">
+                                                <Link to="/shopDetails">Dell latitude E5211</Link>
+                                            </h3>
+                                            <p className="fz-5-single-product-price">$589.00</p>
+                                            <div className="fz-5-discount-badge">
+                                                <button>View more</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+
+    );
+};
+
+export default Home;

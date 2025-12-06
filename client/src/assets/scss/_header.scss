@@ -1,0 +1,175 @@
+/* -----------------------------------
+   GLOBAL HEADER WRAPPER
+----------------------------------- */
+.clean-header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  z-index: 50;
+
+  /* -----------------------------------
+     HEADER CONTAINER
+  ----------------------------------- */
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 30px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* -----------------------------------
+     LOGO
+  ----------------------------------- */
+  .header-logo {
+    img {
+      height: 55px;
+      display: block;
+    }
+  }
+
+  /* -----------------------------------
+     NAVIGATION
+  ----------------------------------- */
+  .header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+
+    a {
+      text-decoration: none;
+      color: #222;
+      font-size: 17px;
+      font-weight: 500;
+      transition: 0.2s ease;
+
+      &:hover {
+        color: #c28b00;
+      }
+    }
+
+    &.open {
+      /* Mobile styling applied inside media query */
+    }
+  }
+
+  /* -----------------------------------
+     ACTIONS (SEARCH, ICON BUTTONS)
+  ----------------------------------- */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    /* SEARCH FORM */
+    .search-form {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 30px;
+      border: 1px solid #ddd;
+      padding: 6px 14px;
+
+      input {
+        border: none;
+        outline: none;
+        font-size: 15px;
+        width: 150px;
+      }
+
+      button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 17px;
+      }
+    }
+
+    /* ICON BUTTONS */
+    .icon-btn {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #333;
+      transition: 0.2s ease;
+
+      &:hover {
+        color: #c28b00;
+      }
+
+      .count {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #c28b00;
+        color: white;
+        font-size: 11px;
+        width: 17px;
+        height: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+    }
+
+    /* BURGER BUTTON */
+    .mobile-burger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      color: #222;
+    }
+  }
+
+  /* -----------------------------------
+     MOBILE VERSION
+  ----------------------------------- */
+  @media (max-width: 992px) {
+    .header-actions {
+      .search-form {
+        display: none;
+      }
+
+      .mobile-burger {
+        display: block;
+      }
+    }
+
+    .header-nav {
+      display: none;
+
+      &.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 75px;
+        left: 0;
+        width: 100%;
+        padding: 25px;
+        background: #fff;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.07);
+        gap: 18px;
+
+        animation: fadeMenu 0.3s ease forwards;
+      }
+    }
+
+    @keyframes fadeMenu {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}

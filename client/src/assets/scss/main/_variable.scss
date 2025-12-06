@@ -16,11 +16,11 @@ $josefin: 'Josefin Sans', sans-serif;
 $teko: 'Teko', sans-serif;
 $balopaaji: 'Baloo Paaji 2';
 $nunito: 'Nunito', sans-serif;
-$oswald : 'Oswald',
+$oswald: 'Oswald',
 sans-serif;
 
-$xxxl : '(min-width: 1600px) and (max-width: 1799px)';
-$xxl : '(min-width: 1400px) and (max-width: 1599px)';
+$xxxl: '(min-width: 1600px) and (max-width: 1799px)';
+$xxl: '(min-width: 1400px) and (max-width: 1599px)';
 $xl: '(min-width: 1200px) and (max-width: 1399px)';
 $lg: '(min-width: 992px) and  (max-width: 1199px)';
 $md: '(min-width: 768px) and  (max-width: 991px)';
@@ -31,35 +31,35 @@ $xs: '(max-width: 767px)';
 /* Default Version */
 @font-face {
     font-family: 'Futura PT';
-    src: url('../fonts/futuraptbook.otf');
+    src: url('../../fonts/futuraptbook.otf');
     font-weight: 300;
 }
 
 /* Demi Version */
 @font-face {
     font-family: 'Futura PT';
-    src: url('../fonts/futuraptdemi.otf');
+    src: url('../../fonts/futuraptdemi.otf');
     font-weight: 600;
 }
 
 /* Medium Version */
 @font-face {
     font-family: 'Futura PT';
-    src: url('../fonts/futuraptmedium.otf');
+    src: url('../../fonts/futuraptmedium.otf');
     font-weight: 500;
 }
 
 /* Light Version */
 @font-face {
     font-family: 'Futura PT';
-    src: url('../fonts/futuraptlight.otf');
+    src: url('../../fonts/futuraptlight.otf');
     font-weight: 200;
 }
 
 /* soligant font */
 @font-face {
     font-family: 'Soligant';
-    src: url('../fonts/soligant.otf');
+    src: url('../../fonts/soligant.otf');
     font-weight: 400;
 }
 
