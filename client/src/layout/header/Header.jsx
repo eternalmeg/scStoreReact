@@ -23,6 +23,8 @@ export default function Header() {
                     <Link to="/wishlist">Wishlist</Link>
                     <Link to="/contact">Contact</Link>
                     <Link to="/profile">Profile</Link>
+                    <Link to="/login">  <i className="fa-regular fa-user-vneck me-2"></i> Sign in</Link>
+
                 </nav>
 
                 {/* RIGHT ACTIONS */}

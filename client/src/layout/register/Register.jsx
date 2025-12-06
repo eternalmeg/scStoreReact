@@ -14,14 +14,14 @@ const Register = () => {
                         <form action="#">
                             <input
                                 type="text"
-                                name="register-username"
+                                name="Name"
                                 id="register-username"
-                                placeholder="Username"
+                                placeholder="Name"
 
                             />
                             <input
                                 type="email"
-                                name="register-email"
+                                name="email"
                                 id="register-email"
                                 placeholder="Email Address"
 
@@ -33,6 +33,21 @@ const Register = () => {
                                 placeholder="Password"
 
                             />
+                            <input
+                                type="password"
+                                name="repassword"
+                                id="register-password"
+                                placeholder="Repead password"
+
+                            />
+
+                            <div className="sign-in-checkbox-container d-flex justify-content-between">
+                                <div className="stay-sign-in">
+                                    <Link to="/login" className="password-recovery-btn">Already have account? Sign in here.</Link>
+                                </div>
+
+                            </div>
+
 
                             <button type="submit" className="fz-1-banner-btn single-form-btn">Register</button>
                         </form>

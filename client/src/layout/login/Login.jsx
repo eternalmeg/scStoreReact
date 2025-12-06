@@ -27,13 +27,12 @@ const Login = () => {
 
                             />
 
-                            
+
                             <div className="sign-in-checkbox-container d-flex justify-content-between">
                                 <div className="stay-sign-in">
-                                    <input type="checkbox" name="sign-in-checkbox" id="sign-in-checkbox"/>
-                                    <label htmlFor="sign-in-checkbox">Stay Logged in</label>
+                                    <Link to="/register" className="password-recovery-btn">Don't have account yet? Register here.</Link>
                                 </div>
-                                <Link to="#" className="password-recovery-btn">Forgot Your Password?</Link>
+
                             </div>
 
                             <button type="submit" className="fz-1-banner-btn single-form-btn">Log in</button>
