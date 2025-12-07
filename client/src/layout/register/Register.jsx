@@ -1,9 +1,64 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
 
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        password: "",
+        rePassword: "",
+    });
+
+    const handleChange = (e) => {
+        setFormData(state => ({
+            ...state,
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // 🔥 ЗАДЪЛЖИТЕЛНО – иначе заявка няма да тръгне
+
+        if (formData.password !== formData.rePassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/register", {
+                method: "POST",
+                credentials: "include",  // 🔥 задължително за cookies
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    password: formData.password
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message);
+                return;
+            }
+
+            alert("Registration successful!");
+            navigate("/login");
+
+        } catch (err) {
+            alert("Server error: " + err.message);
+        }
+    };
 
     return (
         <section className="fz-account-form-section">
@@ -11,69 +66,42 @@ const Register = () => {
                 <div className="row g-4 justify-content-center">
                     <div className="col-lg-6 col-md-8 col-sm-9 col-10 col-xxs-12">
                         <h3 className="single-form-title">Sign up</h3>
-                        <form action="#">
-                            <input
-                                type="text"
-                                name="firstName"
-                                id="firstName"
-                                placeholder="First name"
 
-                            />
+                        <form onSubmit={handleSubmit}>
+                            <input type="text" name="firstName" placeholder="First name"
+                                   value={formData.firstName} onChange={handleChange} />
 
-                            <input
-                                type="text"
-                                name="lastName"
-                                id="lastName"
-                                placeholder="Last name"
+                            <input type="text" name="lastName" placeholder="Last name"
+                                   value={formData.lastName} onChange={handleChange} />
 
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                placeholder="Email Address"
+                            <input type="email" name="email" placeholder="Email Address"
+                                   value={formData.email} onChange={handleChange} />
 
-                            />
+                            <input type="text" name="phone" placeholder="Phone number"
+                                   value={formData.phone} onChange={handleChange} />
 
-                            <input
-                                type="text"
-                                name="phone"
-                                id="phone"
-                                placeholder="Phone number"
+                            <input type="password" name="password" placeholder="Password"
+                                   value={formData.password} onChange={handleChange} />
 
-                            />
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="Password"
-
-                            />
-                            <input
-                                type="password"
-                                name="repassword"
-                                id="rePassword"
-                                placeholder="Repead password"
-
-                            />
+                            <input type="password" name="rePassword" placeholder="Repeat password"
+                                   value={formData.rePassword} onChange={handleChange} />
 
                             <div className="sign-in-checkbox-container d-flex justify-content-between">
-                                <div className="stay-sign-in">
-                                    <Link to="/login" className="password-recovery-btn">Already have account? Sign in
-                                        here.</Link>
-                                </div>
-
+                                <Link to="/login" className="password-recovery-btn">
+                                    Already have an account? Sign in here.
+                                </Link>
                             </div>
 
-
-                            <button type="submit" className="fz-1-banner-btn single-form-btn">Register</button>
+                            <button type="submit" className="fz-1-banner-btn single-form-btn">
+                                Register
+                            </button>
                         </form>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default Register;

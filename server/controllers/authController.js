@@ -15,7 +15,7 @@ function cookieOptions() {
 }
 
 /* ---------------- REGISTER ---------------- */
-router.post('/register', sanitizeMiddleware, async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const result = await authService.register(req.body);
 

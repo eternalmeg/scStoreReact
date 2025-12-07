@@ -10,7 +10,7 @@ exports.register = async (userData) => {
         throw new Error('This email address is already used.');
     }
 
-    if (!userData.name?.trim() || !userData.phone?.trim() || !userData.password?.trim()) {
+    if (!userData.firstName?.trim() ||!userData.lastName.trim() || !userData.phone?.trim() || !userData.password?.trim()) {
         throw new Error('No empty fields or script allowed');
     }
 
@@ -48,7 +48,7 @@ exports.edit = async (userId, userData) => {
     const user = await User.findByIdAndUpdate(
         userId,
         userData,
-        { runValidators: true, new: true }  
+        { runValidators: true, new: true }
     );
 
     const payload = {

@@ -8,8 +8,8 @@ const adminController = require('./controllers/adminController')
 
 
 
-router.use('/api/auth',authController);
-router.use('/api/devices', deviceController);
+router.use('/auth',authController);
+router.use('/devices', deviceController);
 
 router.use('/admin', adminController);
 
