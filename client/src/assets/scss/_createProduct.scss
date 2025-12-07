@@ -1,0 +1,290 @@
+.fz-inner-contact-details {
+  padding: 100px 0;
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+
+  @include xl {
+    gap: 40px;
+  }
+
+  @include lg {
+    padding: 50px 0;
+  }
+
+  @include md {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fz-inner-contact-details__title {
+    font-size: 24px;
+    font-family: $poppins;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    @include lg {
+      font-size: 22px;
+    }
+
+    @include sm {
+      font-size: 20px;
+    }
+  }
+
+  &__left {
+    width: 70%;
+
+    @include lg {
+      width: 65%;
+    }
+
+    @include md {
+      width: 100%;
+    }
+
+    .fz-blog-details__comment-form {
+      padding: 0;
+      background: none;
+      border: none;
+
+      form input,
+      form textarea {
+        border-radius: 5px;
+      }
+    }
+  }
+
+  &__info-card {
+    width: 30%;
+    padding: 30px;
+    background-color: #f8f8f8;
+
+    @include lg {
+      width: 35%;
+    }
+
+    @include md {
+      width: 50%;
+    }
+
+    @include sm {
+      width: 70%;
+    }
+
+    @include xxs {
+      width: 100%;
+      padding: 20px;
+    }
+
+    ul li {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+
+      .contact-numbers {
+        display: flex;
+        flex-direction: column;
+
+        a:hover {
+          color: $color-3;
+        }
+      }
+    }
+
+    .fz-single-contact-info {
+      font-size: 17px;
+      color: #777;
+
+      @include sm {
+        font-size: 15px;
+      }
+
+      i {
+        font-size: 22px;
+        color: $black;
+        padding-top: 4px;
+      }
+    }
+
+    .contact-socials {
+      margin-bottom: 0;
+      margin-top: 30px;
+
+      &__title {
+        font-size: 18px;
+        font-family: $poppins;
+      }
+
+      ul {
+        display: flex;
+        gap: 15px;
+
+        li {
+          margin-bottom: 0;
+
+          a {
+            color: #777;
+
+            &:hover {
+              color: $color-3;
+            }
+          }
+        }
+      }
+    }
+
+  }
+}
+
+
+.fz-contact-location-map {
+  iframe {
+    min-height: 600px;
+    min-width: 100%;
+    vertical-align: top;
+
+    @include xl {
+      min-height: 450px;
+    }
+
+    @include md {
+      min-height: 330px;
+    }
+
+    @include xs {
+      min-height: 280px;
+    }
+  }
+}
+
+.fz-1-banner-btn {
+  border: 1px solid #e2e2e2;
+  border-radius: 30px;
+  height: 60px;
+  padding: 0 45px;
+  line-height: 57px;
+  font-size: 18px;
+  font-weight: 400;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  vertical-align: top;
+
+  @include md {
+    font-size: 16px;
+    padding: 0 35px;
+    height: 50px;
+    line-height: 47px;
+  }
+
+  @include sm {
+    font-size: 14px;
+    padding: 0 25px;
+    height: 40px;
+    line-height: 37px;
+  }
+
+  &:hover {
+    color: $white;
+
+    &::before {
+      width: 100%;
+      right: auto;
+      left: 0;
+    }
+  }
+
+  i {
+    margin-left: 5px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    background-color: $black;
+    border-radius: 30px;
+    right: 0;
+    width: 0%;
+    top: 0;
+    height: 100%;
+    transition: all 0.4s ease 0.1s;
+    z-index: -1;
+  }
+}
+
+.fz-blog-details__comment-form {
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f8f8f8;
+
+  @include xxs {
+    padding: 15px 10px;
+  }
+
+  .fz-comment-form__title {
+    font-family: $poppins;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    @include xs {
+      font-size: 18px;
+    }
+  }
+
+  form {
+    label {
+      color: #777;
+      margin-bottom: 5px;
+      display: block;
+
+      @include xs {
+        font-size: 14px;
+      }
+    }
+
+    input,
+    textarea {
+      border: 1px solid #eaeaea;
+      padding: 10px 15px;
+      width: 100%;
+      background-color: $white;
+      font-weight: 300;
+
+      @include lg {
+        padding: 10px;
+      }
+
+      @include sm {
+        padding: 8px 10px;
+      }
+    }
+
+    textarea {
+      height: 200px;
+    }
+  }
+
+  .fz-comment-form__btn {
+    border-radius: 5px;
+    height: 45px;
+    line-height: 43px;
+    font-size: 16px;
+    padding: 0 30px;
+    margin-top: 20px;
+    background-color: $black;
+    color: $white;
+    border: 1px solid $black;
+
+    &:hover {
+      color: $black;
+    }
+
+    &::before {
+      border-radius: 5px;
+      background-color: $white;
+    }
+  }
+}

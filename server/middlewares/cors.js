@@ -1,5 +1,5 @@
 function setCors() {
-    const allowed = ["http://localhost:4200", "https://scstorewithserver-1.onrender.com"];
+    const allowed = ["http://localhost:5173", "https://scstorewithserver-1.onrender.com"];
 
     return function (req, res, next) {
         const origin = req.headers.origin;

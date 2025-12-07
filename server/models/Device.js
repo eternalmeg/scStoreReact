@@ -1,52 +1,75 @@
 const mongoose = require('mongoose');
 
-const noSpaceValidator = {
-    validator: function (value) {
-        return !/\s/.test(value);
-    }, message: 'No empty space or tabs!'
-}
-
 const deviceSchema = new mongoose.Schema({
     brand: {
         type: String,
-        minLength: [2, 'Minimum characters 2'],
-        required: true
+        required: true,
+        trim: true,
     },
     model: {
         type: String,
-        minLength: [5, 'Minimum characters 5'],
-        required: true
+        required: true,
+        trim: true,
     },
-    image: {
+    sku: {
         type: String,
-        match: [/^https?:\/\/\S+$/, 'Url must starts with https'],
-        required: true
-    },
-    description: {
-        type: String,
-        minLength: [10, 'Minimum characters 10'],
-        required: true
+        required: true,
+        unique: true,
+        trim: true
     },
     price: {
         type: Number,
-        min: 0,
+        required: true,
+        min: 0
+    },
+    category: {
+        type: String,
+        enum: ['Laptop', 'Desktop', 'Server', 'Tablet', 'Phone'],
         required: true
     },
-    preferredList: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'User'
+    quantity: {
+        type: Number,
+        min: 0,
+        default: 1
+    },
+
+
+    shortDescription: {
+        type: String,
+        maxLength: 200
+    },
+
+
+    description: {
+        type: String,
+        required: true
+    },
+
+
+    images: [{
+        type: String, // URL-и
     }],
-    owner: {
+
+
+    author: {
         type: mongoose.Types.ObjectId,
         ref: 'User'
     },
-    createdAt: Date,
-});
 
-deviceSchema.pre('save', function () {
-    if (!this.createdAt) {
-        this.createdAt = Date.now();
+
+    reviewList: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review'
+    }],
+
+
+    averageRating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
     }
-})
+}, { timestamps: true });
+
 const Device = mongoose.model('Device', deviceSchema);
 module.exports = Device;

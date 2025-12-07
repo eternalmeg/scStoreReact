@@ -14,36 +14,53 @@ const Register = () => {
                         <form action="#">
                             <input
                                 type="text"
-                                name="Name"
-                                id="register-username"
-                                placeholder="Name"
+                                name="firstName"
+                                id="firstName"
+                                placeholder="First name"
+
+                            />
+
+                            <input
+                                type="text"
+                                name="lastName"
+                                id="lastName"
+                                placeholder="Last name"
 
                             />
                             <input
                                 type="email"
                                 name="email"
-                                id="register-email"
+                                id="email"
                                 placeholder="Email Address"
+
+                            />
+
+                            <input
+                                type="text"
+                                name="phone"
+                                id="phone"
+                                placeholder="Phone number"
 
                             />
                             <input
                                 type="password"
-                                name="register-password"
-                                id="register-password"
+                                name="password"
+                                id="password"
                                 placeholder="Password"
 
                             />
                             <input
                                 type="password"
                                 name="repassword"
-                                id="register-password"
+                                id="rePassword"
                                 placeholder="Repead password"
 
                             />
 
                             <div className="sign-in-checkbox-container d-flex justify-content-between">
                                 <div className="stay-sign-in">
-                                    <Link to="/login" className="password-recovery-btn">Already have account? Sign in here.</Link>
+                                    <Link to="/login" className="password-recovery-btn">Already have account? Sign in
+                                        here.</Link>
                                 </div>
 
                             </div>

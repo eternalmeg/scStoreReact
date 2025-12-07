@@ -17,14 +17,14 @@ exports.authMiddleWare = async (req, res, next) => {
 
         req.user = decodedToken;
         res.locals.isAuthenticatad = true;
-        //if we have profile etc
+        //if we have userProfile etc
         res.locals.user = decodedToken;
 
         next();
 
     } catch (err) {
         res.clearCookie('auth');
-        res.redirect('/auth/login');
+        return res.status(401).json({ message: "Unauthorized" });
     }
 };
 exports.isAuth = (req, res, next) => {

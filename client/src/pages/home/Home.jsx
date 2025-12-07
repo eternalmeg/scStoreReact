@@ -34,7 +34,7 @@ const Home = () => {
                                     <div className="fz-5-banner-txt">
                                         <h3>Sc Store</h3>
                                         <h1>Find what you need</h1>
-                                        <Link to="/shop-2" className="fz-5-def-btn">
+                                        <Link to="/catalog" className="fz-5-def-btn">
                                             Shop Now
                                         </Link>
                                     </div>
@@ -49,7 +49,7 @@ const Home = () => {
                                     <div className="fz-5-banner-txt">
                                         <h3>Sc Store</h3>
                                         <h1>Find best offer</h1>
-                                        <Link to="/shop-2" className="fz-5-def-btn">
+                                        <Link to="/catalog" className="fz-5-def-btn">
                                             Shop Now
                                         </Link>
                                     </div>
@@ -89,12 +89,10 @@ const Home = () => {
                                                 <span className="color-3"></span>
                                             </div>
                                             <h3 className="fz-5-single-product-title">
-                                                <Link to="/shopDetails">Dell latitude E5211</Link>
+                                                <Link to="/details">Dell latitude E5211</Link>
                                             </h3>
                                             <p className="fz-5-single-product-price">$589.00</p>
-                                            <div className="fz-5-discount-badge">
-                                                <button>View more</button>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

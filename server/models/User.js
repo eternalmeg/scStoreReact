@@ -8,41 +8,78 @@ const noSpaceValidator = {
 }
 
 const userSchema = new mongoose.Schema({
-    name: {
+
+    firstName: {
         type: String,
         minLength: 2,
         maxLength: 20,
-        required: [true, 'Name is required']
+        required: [true, 'First name is required']
     },
+
+    lastName: {
+        type: String,
+        minLength: 2,
+        maxLength: 20,
+        required: [true, 'Last name is required']
+    },
+
     email: {
         type: String,
         required: [true, 'Email is required'],
-        minLength: [8, 'Email must be at least 8 characters long'],
+        minLength: 8,
         unique: true
     },
+
     phone: {
         type: String,
         required: [true, 'Phone is required'],
         minLength: 9
     },
+
     password: {
         type: String,
         minLength: 4,
-        required: [true, 'password is required']
+        required: [true, 'Password is required']
     },
-    createdDevice: [{
+
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+
+
+    wishlist: [{
         type: mongoose.Types.ObjectId,
         ref: 'Device'
     }],
-    preferDevice: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Device'
+
+
+    cart: [{
+        device: {
+            type: mongoose.Types.ObjectId,
+            ref: 'Device'
+        },
+        quantity: {
+            type: Number,
+            default: 1,
+            min: 1
+        }
     }]
 
-});
+}, { timestamps: true });
 
 userSchema.pre('save', async function () {
     this.password = await bcrypt.hash(this.password, 12);
+});
+
+
+userSchema.pre('findOneAndUpdate', async function () {
+    const update = this.getUpdate();
+
+    if (update.password) {
+        update.password = await bcrypt.hash(update.password, 12);
+    }
 });
 
 

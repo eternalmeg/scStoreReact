@@ -4,12 +4,15 @@ const router = require('express').Router();
 const homeController = require('./controllers/homeController');
 const authController = require('./controllers/authController');
 const deviceController = require('./controllers/deviceController');
-const chatController = require('./controllers/chatController')
+const adminController = require('./controllers/adminController')
 
 
-router.use('/auth',authController);
-router.use('/devices', deviceController);
-router.use('/chat', chatController)
+
+router.use('/api/auth',authController);
+router.use('/api/devices', deviceController);
+
+router.use('/admin', adminController);
+
 
 
 module.exports = router;

@@ -18,12 +18,13 @@ export default function Header() {
                 {/* NAVIGATION */}
                 <nav className={`header-nav ${mobileOpen ? "open" : ""}`}>
                     <Link to="/">Home</Link>
-                    <Link to="/products">Products</Link>
+                    <Link to="/catalog">Catalog</Link>
                     <Link to="/about">About</Link>
-                    <Link to="/wishlist">Wishlist</Link>
                     <Link to="/contact">Contact</Link>
                     <Link to="/profile">Profile</Link>
                     <Link to="/login">  <i className="fa-regular fa-user-vneck me-2"></i> Sign in</Link>
+                    <Link to="/cart">Cart</Link>
+                    <Link to="/logout">Logout</Link>
 
                 </nav>
 
