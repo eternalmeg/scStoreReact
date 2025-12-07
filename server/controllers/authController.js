@@ -3,7 +3,7 @@ const authService = require('../services/authService');
 const { isAuth } = require("../middlewares/authMiddleWare");
 const sanitizeMiddleware = require('../middlewares/sanitizeMiddleware');
 
-// Helper: cookie options
+
 const isProduction = process.env.NODE_ENV === "production";
 
 function cookieOptions() {
@@ -14,7 +14,7 @@ function cookieOptions() {
     };
 }
 
-/* ---------------- REGISTER ---------------- */
+
 router.post('/register', async (req, res) => {
     try {
         const result = await authService.register(req.body);
@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-/* ---------------- LOGIN ---------------- */
+
 router.post('/login', async (req, res) => {
     try {
         const result = await authService.login(req.body);
@@ -40,13 +40,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
-/* ---------------- LOGOUT ---------------- */
+
 router.post('/logout', (req, res) => {
     res.clearCookie("auth", cookieOptions());
     res.status(200).json({ message: "Logged out" });
 });
 
-/* ---------------- PROFILE GET ---------------- */
+
 router.get('/profile', isAuth, async (req, res) => {
     try {
         const id = req.user?._id;
@@ -58,7 +58,7 @@ router.get('/profile', isAuth, async (req, res) => {
     }
 });
 
-/* ---------------- PROFILE UPDATE ---------------- */
+
 router.put('/profile', isAuth, sanitizeMiddleware, async (req, res) => {
     try {
         const id = req.user?._id;
@@ -72,7 +72,7 @@ router.put('/profile', isAuth, sanitizeMiddleware, async (req, res) => {
     }
 });
 
-/* ---------------- GET MULTIPLE USERS (reviews etc.) ---------------- */
+
 router.post('/get-owners', async (req, res) => {
     try {
         const owners = await authService.getOwners(req.body.ownerIds);
@@ -83,7 +83,7 @@ router.post('/get-owners', async (req, res) => {
     }
 });
 
-/* ---------------- GET USER BY ID ---------------- */
+
 router.get('/:id', async (req, res) => {
     try {
         const user = await authService.getUserById(req.params.id);
