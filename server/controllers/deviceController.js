@@ -4,8 +4,6 @@ const deviceService = require("../services/deviceService");
 const { isAdmin } = require("../middlewares/adminMiddleware");
 
 
-
-
 router.get("/latest", async (req, res) => {
     try {
         const devices = await deviceService.getLatest();
@@ -37,8 +35,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-
-router.post("/", isAdmin, async (req, res) => {
+router.post("/create", isAdmin, async (req, res) => {
     try {
         const device = await deviceService.create(req.body);
         res.status(201).json(device);
@@ -66,5 +63,18 @@ router.delete("/:id", isAdmin, async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+
+router.get("/search/:query", async (req, res) => {
+    const query = req.params.query;
+
+    try {
+        const devices = await deviceService.search(query);
+        res.json(devices);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 
 module.exports = router;
