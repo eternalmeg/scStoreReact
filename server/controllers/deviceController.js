@@ -1,13 +1,11 @@
-// controllers/deviceController.js
+
 const router = require("express").Router();
 const deviceService = require("../services/deviceService");
 const { isAdmin } = require("../middlewares/adminMiddleware");
 
-// -------------------------
-// PUBLIC ROUTES
-// -------------------------
 
-// GET /api/devices/latest
+
+
 router.get("/latest", async (req, res) => {
     try {
         const devices = await deviceService.getLatest();
@@ -17,7 +15,7 @@ router.get("/latest", async (req, res) => {
     }
 });
 
-// GET /api/devices
+
 router.get("/", async (req, res) => {
     try {
         const devices = await deviceService.getAll();
@@ -27,7 +25,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// GET /api/devices/:id
+
 router.get("/:id", async (req, res) => {
     try {
         const device = await deviceService.getById(req.params.id);
@@ -39,11 +37,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-// -------------------------
-// ADMIN ONLY ROUTES
-// -------------------------
 
-// POST /api/devices
 router.post("/", isAdmin, async (req, res) => {
     try {
         const device = await deviceService.create(req.body);
@@ -53,7 +47,7 @@ router.post("/", isAdmin, async (req, res) => {
     }
 });
 
-// PUT /api/devices/:id
+
 router.put("/:id", isAdmin, async (req, res) => {
     try {
         const device = await deviceService.update(req.params.id, req.body);
@@ -63,7 +57,7 @@ router.put("/:id", isAdmin, async (req, res) => {
     }
 });
 
-// DELETE /api/devices/:id
+
 router.delete("/:id", isAdmin, async (req, res) => {
     try {
         await deviceService.remove(req.params.id);
