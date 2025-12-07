@@ -1,12 +1,15 @@
 export async function request(url, method = "GET", body) {
-
     const options = {
         method,
         credentials: "include",
         headers: {}
     };
 
-    if (body) {
+
+    if (body instanceof FormData) {
+        options.body = body;
+
+    } else if (body) {
         options.headers["Content-Type"] = "application/json";
         options.body = JSON.stringify(body);
     }

@@ -4,7 +4,7 @@ import { request } from "./requestHelper";
 
 
 export function getAll() {
-    return request(`${BASE_URL}/catalog`);
+    return request(`${BASE_URL}`);
 }
 
 export function getLatest() {

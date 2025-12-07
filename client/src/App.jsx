@@ -11,7 +11,7 @@ import ProductDetails from "./pages/details/Details.jsx";
 import Cart from "./pages/cart/Cart.jsx";
 import Wishlist from "./pages/wishlist/Wishlist.jsx";
 import UserProfile from "./pages/userProfile/UserProfile.jsx";
-import ProductForm from "./pages/productForm/ProductForm.jsx";
+import ProductForm from "./admin/pages/products/ProductForm.jsx";
 import {AdminRoutes} from "./admin/AdminRoutes.jsx";
 import AdminRoute from "./guards/AdminRoute.jsx";
 import Dashboard from "./admin/pages/Dashboard.jsx";
