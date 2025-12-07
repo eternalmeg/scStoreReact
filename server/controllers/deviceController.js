@@ -1,165 +1,76 @@
-const router = require('express').Router();
-const {isAuth} = require("../middlewares/authMiddleWare");
-const deviceService = require('../services/deviceService');
-const authService = require('../services/authService')
-const sanitizeMiddleware = require('../middlewares/sanitizeMiddleware')
+// controllers/deviceController.js
+const router = require("express").Router();
+const deviceService = require("../services/deviceService");
+const { isAdmin } = require("../middlewares/adminMiddleware");
 
-router.get('/latest', async (req, res) => {
+// -------------------------
+// PUBLIC ROUTES
+// -------------------------
 
+// GET /api/devices/latest
+router.get("/latest", async (req, res) => {
     try {
-        const devices = await deviceService.getLastDevices().lean();
-        res.json(devices)
+        const devices = await deviceService.getLatest();
+        res.json(devices);
     } catch (err) {
-        res.status(400).json({message: err.message})
+        res.status(400).json({ message: err.message });
     }
-
 });
-router.get('/catalog', async (req, res) => {
 
+// GET /api/devices
+router.get("/", async (req, res) => {
     try {
-        const devices = await deviceService.getAll().lean();
-        res.json(devices)
+        const devices = await deviceService.getAll();
+        res.json(devices);
     } catch (err) {
-        res.status(400).json({message: err.message})
+        res.status(400).json({ message: err.message });
     }
-
 });
 
-
-router.post('/create', isAuth,sanitizeMiddleware, async (req, res) => {
-    const deviceData = req.body;
-
+// GET /api/devices/:id
+router.get("/:id", async (req, res) => {
     try {
-        await deviceService.create(req.user._id, deviceData);
-        res.status(200).end();
+        const device = await deviceService.getById(req.params.id);
+        if (!device) return res.status(404).json({ message: "Not found" });
+
+        res.json(device);
     } catch (err) {
-        res.status(400).json({message: err.message})
+        res.status(400).json({ message: err.message });
     }
 });
 
-router.get('/:deviceId/details', async (req, res) => {
-    try {
-        let deviceId = req.params.deviceId
-        let device = await deviceService.getOne(deviceId)
-        if (!device) {
-            throw new Error('Not found')
-        }
-        res.json(device)
+// -------------------------
+// ADMIN ONLY ROUTES
+// -------------------------
 
+// POST /api/devices
+router.post("/", isAdmin, async (req, res) => {
+    try {
+        const device = await deviceService.create(req.body);
+        res.status(201).json(device);
     } catch (err) {
-        res.status(404).json({message: err.message})
+        res.status(400).json({ message: err.message });
     }
-
-
 });
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-router.get('/:deviceId', isAuth, async (req, res) => {
-    let deviceId = req.params.deviceId;
-    let userId = req.user._id;
-
+// PUT /api/devices/:id
+router.put("/:id", isAdmin, async (req, res) => {
     try {
-        await deviceService.prefer(req.params.deviceId, req.user._id);
-        let user = await authService.getInfo(userId);
-        console.log(user)
-        // await deviceService.delete(deviceId);
-        res.status(200).json(user)
-
+        const device = await deviceService.update(req.params.id, req.body);
+        res.json(device);
     } catch (err) {
-        res.status(404).json({message: err.message})
+        res.status(400).json({ message: err.message });
     }
 });
 
-
-router.post('/cancel/:deviceId', isAuth, async (req,res) => {
-    const deviceId = req.params.deviceId;
-    const userId = req.user._id;
-
-    try{
-        await deviceService.cancelPrefer(deviceId, userId);
-        res.status(200).json({message: "Purchase cancelled successfully!"})
-
-    }catch (err){
-        res.status(400).json({message: err.message})
-    }
-});
-
-router.post('/cancel-all', isAuth, async (req,res) => {
-    const { deviceIds } = req.body;
-    const userId = req.user._id;
-
-    if(!deviceIds || deviceIds.length === 0) {
-        return res.status(400).json({message: "No devices provided!"});
-    }
-
+// DELETE /api/devices/:id
+router.delete("/:id", isAdmin, async (req, res) => {
     try {
-        await deviceService.cancelMultiPrefer(deviceIds, userId);
-        res.status(200).json({message: "Canceled successfully"})
-    } catch (err) {
-        res.status(500).json({message: err.message})
-    }
-});
-
-
-//@@@@@@@@@@@@@@@@@@
-
-router.delete('/:deviceId', isAuth, async (req, res) => {
-    let deviceId = req.params.deviceId
-    const userId = req.user._id;
-    console.log(deviceId)
-    try {
-        await deviceService.delete1(req.params.deviceId, userId)
-        res.status(204).end()
-    } catch (err) {
-        res.status(401).json({message: err.message})
-    }
-});
-
-
-router.put('/:deviceId', isAuth,sanitizeMiddleware, async (req, res) => {
-    const deviceData = req.body;
-
-    try {
-        await deviceService.edit(req.params.deviceId, deviceData);
+        await deviceService.remove(req.params.id);
         res.status(204).end();
     } catch (err) {
-        res.status(401).json({message: err.message})
-    }
-
-});
-
-
-router.post('/delete-multiple', isAuth, async (req, res) => {
-    const {deviceIds} = req.body;
-
-    try {
-        await deviceService.deleteMultiple(deviceIds);
-        res.status(200).json({message: "Devices successfully bought!"});
-    } catch (err) {
-        res.status(500).json({message: err.message});
+        res.status(400).json({ message: err.message });
     }
 });
-
-router.get('/search/:brand', async (req, res) => {
-    const brandName = req.params.brand;
-    console.log(brandName)
-    let devices;
-
-
-    try {
-        if(brandName) {
-            devices = await deviceService.search(brandName)
-        } else {
-            devices = [];
-        }
-        res.status(200).json(devices)
-    } catch (err) {
-        res.status(400).json({message: err.message})
-        console.log("NO")
-    }
-
-
-});
-
 
 module.exports = router;

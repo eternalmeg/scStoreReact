@@ -13,7 +13,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/scStoreReact')
             email: 'admin@scstore.com',
             phone: '000000000',
             role: 'admin',
-            password: hashed
+            password: '123456'
         });
 
         console.log("Admin created!");

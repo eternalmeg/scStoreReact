@@ -13,6 +13,8 @@ import Wishlist from "./pages/wishlist/Wishlist.jsx";
 import UserProfile from "./pages/userProfile/UserProfile.jsx";
 import ProductForm from "./pages/productForm/ProductForm.jsx";
 import {AdminRoutes} from "./admin/AdminRoutes.jsx";
+import AdminRoute from "./guards/AdminRoute.jsx";
+import Dashboard from "./admin/pages/Dashboard.jsx";
 
 function App() {
     return (
@@ -24,6 +26,9 @@ function App() {
 
 
                 <Routes>
+                    <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>}/>
+                    <Route path="/admin/products/create" element={<AdminRoute><ProductForm /></AdminRoute>}/>
+                    <Route path="/admin/products/edit/:id" element={<AdminRoute><ProductForm /></AdminRoute>}/>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />

@@ -7,9 +7,11 @@ exports.authMiddleWare = async (req, res, next) => {
     const token = req.cookies['auth'];
 
     if (!token) {
-        console.log('no token')
+       // console.log('no token')
         return next();
     }
+
+
 //todo verify token
 
     try {
@@ -17,7 +19,7 @@ exports.authMiddleWare = async (req, res, next) => {
 
         req.user = decodedToken;
         res.locals.isAuthenticatad = true;
-        //if we have userProfile etc
+
         res.locals.user = decodedToken;
 
         next();

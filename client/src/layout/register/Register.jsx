@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register } from "../../services/authService";
+import { useUser } from "../../context/useUser";
 
 const Register = () => {
 
     const navigate = useNavigate();
+
+    const { login: saveUser } = useUser();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -30,33 +35,14 @@ const Register = () => {
         }
 
         try {
-            const res = await fetch("http://localhost:3000/api/auth/register", {
-                method: "POST",
-                credentials: "include",  // 🔥 задължително за cookies
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                    phone: formData.phone,
-                    password: formData.password
-                })
-            });
+            const result = await register(formData);
 
-            const data = await res.json();
+            saveUser(result); // пазим user-а в контекст
+            toast.success("Registered successfully!");
 
-            if (!res.ok) {
-                alert(data.message);
-                return;
-            }
-
-            alert("Registration successful!");
-            navigate("/login");
-
+            navigate("/");
         } catch (err) {
-            alert("Server error: " + err.message);
+            toast.error(err.message);
         }
     };
 

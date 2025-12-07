@@ -1,9 +1,36 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { login } from "../../services/authService";
+import {useUser} from "../../context/useUser.js";
+
 
 const Login = () => {
+    const { login: saveUser } = useUser();
+    const navigate = useNavigate();
 
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const result = await login(formData);
+            saveUser(result);
+
+            toast.success("Logged in!");
+            navigate("/");
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
 
     return (
         <section className="fz-account-form-section">
@@ -11,38 +38,22 @@ const Login = () => {
                 <div className="row g-4 justify-content-center">
                     <div className="col-lg-6 col-md-8 col-sm-9 col-10 col-xxs-12">
                         <h3 className="single-form-title">Sign in</h3>
-                        <form action="#" >
-                            <input
-                                type="text"
-                                name="email"
-                                id="login-username"
-                                placeholder="Email"
 
-                            />
-                            <input
-                                type="password"
-                                name="login-password"
-                                id="login-password"
-                                placeholder="Password"
+                        <form onSubmit={handleSubmit}>
+                            <input type="text" name="email" placeholder="Email" onChange={handleChange} />
+                            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
 
-                            />
-
-
-                            <div className="sign-in-checkbox-container d-flex justify-content-between">
-                                <div className="stay-sign-in">
-                                    <Link to="/register" className="password-recovery-btn">Don't have account yet? Register here.</Link>
-                                </div>
-
-                            </div>
+                            <Link to="/register" className="password-recovery-btn">
+                                Don’t have account yet? Register here.
+                            </Link>
 
                             <button type="submit" className="fz-1-banner-btn single-form-btn">Log in</button>
                         </form>
                     </div>
-
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default Login;
