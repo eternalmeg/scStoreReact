@@ -65,6 +65,7 @@ const deviceSchema = new mongoose.Schema({
 
     averageRating: {
         type: Number,
+
         min: 0,
         max: 5,
         default: 0

@@ -2,7 +2,7 @@ import React from 'react'
 import {Link} from "react-router-dom";
 
 
-const CartMain = ({ cartArray, remove, quantity }) => {
+const Cart = ({ cartArray, remove, quantity }) => {
 
 
 
@@ -134,4 +134,4 @@ const CartMain = ({ cartArray, remove, quantity }) => {
     )
 }
 
-export default CartMain
+export default Cart

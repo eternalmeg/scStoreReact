@@ -5,6 +5,8 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/autoplay";
 import {getLatest} from "../../services/productService.js";
+import Offer from "../../layout/offer/Offer.jsx";
+
 
 const Home = () => {
     const [latest, setLatest] = useState([]);
@@ -133,7 +135,11 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+<Offer />
         </div>
+
+
     );
 };
 

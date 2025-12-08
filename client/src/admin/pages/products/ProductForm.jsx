@@ -199,7 +199,7 @@ const ProductForm = () => {
                                         />
                                     </div>
 
-                                    {/* Images Preview */}
+
                                     {formData.images.length > 0 && (
                                         <div className="col-12">
                                             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>

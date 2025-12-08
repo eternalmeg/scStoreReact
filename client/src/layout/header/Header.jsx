@@ -40,9 +40,7 @@ export default function Header() {
                     <Link to="/about">About</Link>
                     <Link to="/contact">Contact</Link>
 
-                    {isAdmin && (
-                        <Link to="/admin">Admin Panel</Link>
-                    )}
+
 
 
                     {isAuthenticated && (
@@ -85,12 +83,6 @@ export default function Header() {
 
 
 
-                    {isAuthenticated && (
-                        <button className="icon-btn">
-                            <i className="fa-light fa-heart"></i>
-                            <span className="count">{user?.wishlist?.length ?? 0}</span>
-                        </button>
-                    )}
 
 
                     {isAuthenticated && (

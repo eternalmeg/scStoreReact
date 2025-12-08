@@ -1134,7 +1134,7 @@
 
 .fz-single-product__img {
   width: 100%;
-  height: 260px;         /* фиксирана височина → еднакви блокове */
+  height: 260px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1151,8 +1151,8 @@
 }
 
 .fz-single-product__img {
-  overflow: hidden; // важно – скрива излизането извън контейнера
-  border-radius: 8px; // опционално, ако искаш по-красиво
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .fz-single-product__img img {
@@ -1160,6 +1160,6 @@
 }
 
 .fz-single-product__img:hover img {
-  transform: scale(1.08); // лек zoom
+  transform: scale(1.08);
 }
 
