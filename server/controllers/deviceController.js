@@ -45,7 +45,7 @@ router.post("/create", isAdmin, async (req, res) => {
 });
 
 
-router.put("/device/:id", isAdmin, async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
     try {
         const device = await deviceService.update(req.params.id, req.body);
         res.json(device);
@@ -55,7 +55,7 @@ router.put("/device/:id", isAdmin, async (req, res) => {
 });
 
 
-router.delete("/device/:id", isAdmin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
     try {
         await deviceService.remove(req.params.id);
         res.status(204).end();
@@ -63,5 +63,18 @@ router.delete("/device/:id", isAdmin, async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+
+router.get("/search/:query", async (req, res) => {
+    const query = req.params.query;
+
+    try {
+        const devices = await deviceService.search(query);
+        res.json(devices);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 
 module.exports = router;
