@@ -128,7 +128,7 @@ router.get('/reviews', isAdmin, async (req, res) => {
 
 router.delete('/reviews/:id', isAdmin, async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);
-    res.json({ message: "Review deleted" });
+    res.json({ message: "ReviewForm deleted" });
 });
 
 module.exports = router;

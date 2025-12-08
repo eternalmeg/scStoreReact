@@ -13,7 +13,7 @@ const Footer = () => {
                         <div className="col-lg-6">
                             <p className="fz-copyright">
                                 &copy;
-                                {currentYear} Design & Developed by <b></b>
+                                {currentYear} Developed by eternalmeg for SoftUni React course<b></b>
                             </p>
                         </div>
 

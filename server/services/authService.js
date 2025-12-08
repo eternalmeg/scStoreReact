@@ -38,10 +38,14 @@ exports.login = async ({ email, password }) => {
     return await generateToken(user);
 };
 
+exports.getById = async (id) => {
+    return User.findById(id).select("-password");
+};
+
+
 exports.getInfo = async (userId) => {
-    return User.findById(userId)
-        .populate('createdDevice')
-        .populate('preferDevice');
+    return User.findById(userId);
+
 };
 
 exports.edit = async (userId, userData) => {

@@ -121,7 +121,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* Model */}
+
                                 <div className="col-6">
                                     <input
                                         type="text"
@@ -133,7 +133,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* SKU */}
+
                                 <div className="col-6">
                                     <input
                                         type="text"
@@ -145,7 +145,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* Price */}
+
                                 <div className="col-6">
                                     <input
                                         type="number"
@@ -157,7 +157,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* Category */}
+
                                 <div className="col-6">
                                     <Form.Select
                                         name="category"
@@ -172,7 +172,7 @@ export default function ProductEdit() {
                                     </Form.Select>
                                 </div>
 
-                                {/* Quantity */}
+
                                 <div className="col-6">
                                     <input
                                         type="number"
@@ -184,7 +184,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* Short Description */}
+
                                 <div className="col-12">
                                     <textarea
                                         name="shortDescription"
@@ -195,7 +195,7 @@ export default function ProductEdit() {
                                     ></textarea>
                                 </div>
 
-                                {/* Description */}
+
                                 <div className="col-12">
                                     <textarea
                                         name="description"
@@ -206,7 +206,7 @@ export default function ProductEdit() {
                                     ></textarea>
                                 </div>
 
-                                {/* Upload new images */}
+
                                 <div className="col-12">
                                     <label>Replace / add images</label>
                                     <input
@@ -217,7 +217,7 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-                                {/* Image preview */}
+
                                 <div className="col-12">
                                     <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                                         {formData.images.map((img, i) => (

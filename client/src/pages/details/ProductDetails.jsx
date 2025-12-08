@@ -5,6 +5,10 @@ import ProductDetailsSlider from "../../layout/productDetailsSlider/ProductDetai
 import { getOne, deleteProduct } from "../../services/productService";
 import UserContext from "../../context/UserContext";
 import { toast } from "react-toastify";
+import ProductReview from "../../layout/review/ProductReview.jsx";
+import { getReviews } from "../../services/reviewService";
+
+
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -13,12 +17,30 @@ const ProductDetails = () => {
 
     const [product, setProduct] = useState(null);
     const [activeTab, setActiveTab] = useState("description");
+    const [reviews, setReviews] = useState([]);
+
 
     useEffect(() => {
         getOne(id)
-            .then(setProduct)
+            .then(data => {
+                setProduct(data);
+
+                const reviewObj = data.reviewList;
+
+
+                const cleanReviews = Object.values(reviewObj).filter(
+                    item => typeof item === "object" && item.comment
+                );
+
+
+
+                setReviews(cleanReviews);
+            })
             .catch(err => toast.error(err.message));
     }, [id]);
+
+
+
 
     const handleDelete = async () => {
         if (!window.confirm("Are you sure you want to delete this product?")) return;
@@ -36,7 +58,7 @@ const ProductDetails = () => {
 
     return (
         <div>
-            {/* Breadcrumb */}
+
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
                     <div className="row justify-content-between align-items-center">
@@ -53,17 +75,17 @@ const ProductDetails = () => {
                 </div>
             </div>
 
-            {/* Main Section */}
+
             <section className="fz-product-details">
                 <div className="container">
                     <div className="row align-items-start justify-content-center">
 
-                        {/* IMAGES */}
+
                         <div className="col-lg-5 col-md-6 col-12 col-xxs-12">
                             <ProductDetailsSlider images={product.images} />
                         </div>
 
-                        {/* PRODUCT TEXT */}
+
                         <div className="col-lg-7 col-md-6">
                             <div className="fz-product-details__txt">
 
@@ -71,20 +93,22 @@ const ProductDetails = () => {
                                     {product.brand} {product.model}
                                 </h2>
 
-                                {/* PRICE + RATING */}
+
                                 <div className="fz-product-details__price-rating">
                                     <span className="price">${product.price}</span>
 
                                     <div className="rating">
-                                        <i className="fa-solid fa-star"></i>
-                                        <i className="fa-solid fa-star"></i>
-                                        <i className="fa-solid fa-star"></i>
-                                        <i className="fa-solid fa-star"></i>
-                                        <i className="fa-light fa-star"></i>
+                                        {Array.from({length: 5}).map((_, i) => (
+                                            <i
+                                                key={i}
+                                                className={`fa-${i < Math.round(product.averageRating) ? "solid" : "light"} fa-star`}
+                                            ></i>
+                                        ))}
                                     </div>
+
                                 </div>
 
-                                {/* PRODUCT INFO */}
+
                                 <div className="fz-product-details__infos">
                                     <ul>
                                         <li><span className="info-property">SKU</span> : {product.sku}</li>
@@ -97,12 +121,12 @@ const ProductDetails = () => {
                                     </ul>
                                 </div>
 
-                                {/* SHORT DESCRIPTION */}
+
                                 <p className="fz-product-details__short-descr">
                                     {product.shortDescription}
                                 </p>
 
-                                {/* ACTION BUTTONS */}
+
                                 <div className="fz-product-details__actions">
                                     <div className="fz-product-details__quantity cart-product__quantity">
                                         <button className="minus-btn cart-product__minus">
@@ -121,7 +145,7 @@ const ProductDetails = () => {
                                     </button>
                                 </div>
 
-                                {/* ADMIN ACTIONS */}
+
                                 {isAdmin && (
                                     <div className="fz-product-details__actions mt-3">
                                         <button
@@ -143,7 +167,7 @@ const ProductDetails = () => {
                             </div>
                         </div>
 
-                        {/* TABS */}
+
                         <div className="col-12">
                             <div className="fz-product-details__additional-info">
 
@@ -159,7 +183,7 @@ const ProductDetails = () => {
 
                                 <Tab.Content>
 
-                                    {/* DESCRIPTION TAB */}
+
                                     <Tab.Pane
                                         eventKey="description"
                                         className={`tab-pane ${activeTab === 'description' ? 'show active' : ''}`}
@@ -171,22 +195,26 @@ const ProductDetails = () => {
                                         </div>
                                     </Tab.Pane>
 
-                                    {/* REVIEWS TAB */}
+
                                     <Tab.Pane
                                         eventKey="review"
                                         className={`tab-pane ${activeTab === 'review' ? 'show active' : ''}`}
                                     >
-                                        <h4 className="reviews-title">Reviews</h4>
+
+                                        <ProductReview reviews={reviews} />
+
+
+
+
                                         <div className="fz-product-details__actions mt-3">
                                             <button
-                                                onClick={() => navigate(`/reviews/create`)}
+                                                onClick={() => navigate(`/product/${product._id}/review/create`)}
                                                 className="fz-product-details__add-to-cart"
                                             >
                                                 Leave a review
                                             </button>
                                         </div>
-                                        <p>No reviews yet. <Link to="/reviews/create">Be the first one to leave a
-                                            review!</Link></p>
+
                                     </Tab.Pane>
 
                                 </Tab.Content>

@@ -15,7 +15,7 @@ export default function Header() {
                 credentials: "include",
             });
 
-            logout(); // пренасочване след logout
+            logout();
         } catch (err) {
             console.log("Logout error:", err);
         }
@@ -47,9 +47,9 @@ export default function Header() {
 
                     {isAuthenticated && (
                         <>
-                            <Link to="/profile">Profile</Link>
+                            <Link to="/user">Profile</Link>
 
-                            {/* Само за ADMIN */}
+
                             {isAdmin && (
                                 <Link to="/admin">Admin Panel</Link>
                             )}

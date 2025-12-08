@@ -18,6 +18,10 @@ export async function getProfile() {
     return request(`${BASE_URL}/profile`, "GET");
 }
 
+export function updateProfile(data) {
+    return request(`${BASE_URL}/users/update`, "PUT", data);
+}
+
 
 
 async function request(url, method = "GET", body) {

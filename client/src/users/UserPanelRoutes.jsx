@@ -1,4 +1,4 @@
-// src/user/UserRoutes.jsx
+// src/user/UserPanelRoutes.jsx
 import { Route } from "react-router-dom";
 
 import UserLayout from "./UserLayout";
@@ -9,7 +9,7 @@ import ProductList from "../admin/pages/products/ProductList.jsx";
 import React from "react";
 import ReviewForm from "../layout/reviewForm/ReviewForm.jsx"; // само логнати
 
-export const UserRoutes = (
+export const UserPanelRoutes = (
     <Route
         path="/user"
         element={
@@ -22,8 +22,6 @@ export const UserRoutes = (
         <Route index element={<UserProfile />} />
 
         {/* User subpages */}
-
-        <Route path="reviews/create" element={<ReviewForm />} />
 
     </Route>
 );

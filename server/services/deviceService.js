@@ -10,8 +10,16 @@ exports.getAll = () => {
 };
 
 exports.getById = (id) => {
-    return Device.findById(id);
+    return Device.findById(id)
+        .populate({
+            path: "reviewList",
+            populate: {
+                path: "user",
+                select: "firstName lastName"
+            }
+        });
 };
+
 
 exports.create = (data) => {
     return Device.create(data);

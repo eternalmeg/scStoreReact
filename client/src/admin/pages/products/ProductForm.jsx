@@ -28,7 +28,7 @@ const ProductForm = () => {
         }));
     };
 
-    // MULTIPLE IMAGES
+
     const handleImages = (e) => {
         setFormData(prev => ({
             ...prev,

@@ -59,7 +59,7 @@ router.get('/profile', isAuth, async (req, res) => {
 });
 
 
-router.put('/profile', isAuth, sanitizeMiddleware, async (req, res) => {
+router.put('/users/update', isAuth, sanitizeMiddleware, async (req, res) => {
     try {
         const id = req.user?._id;
         const { user, token } = await authService.edit(id, req.body);
@@ -93,5 +93,22 @@ router.get('/:id', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+
+
+
+// GET /api/users/me
+router.get("/users/me", isAuth, async (req, res) => {
+    try {
+        const user = await authService.getById(req.user._id);
+        res.json(user);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+module.exports = router;
+
+
 
 module.exports = router;
