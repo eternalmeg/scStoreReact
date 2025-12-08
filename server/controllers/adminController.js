@@ -4,6 +4,7 @@ const { isAdmin } = require('../middlewares/adminMiddleware');
 const Device = require('../models/Device');
 const User = require('../models/User');
 const Review = require('../models/Review');
+const bcrypt = require('bcrypt');
 
 // --- DEVICE ROUTES --- //
 
@@ -59,6 +60,39 @@ router.delete('/devices/:id', isAdmin, async (req, res) => {
 
 
 // --- USER ROUTES --- //
+// CREATE USER
+router.post("/users", isAdmin, async (req, res) => {
+    try {
+        const { firstName, lastName, email, password, role, phone } = req.body;
+
+        const existing = await User.findOne({ email });
+        if (existing) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        const hashedPass = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            firstName,
+            lastName,
+            email,
+            phone,
+            role,
+            password: hashedPass,
+        });
+
+        res.status(201).json({
+            _id: user._id,
+            firstName,
+            lastName,
+            email,
+            role,
+            phone
+        });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 
 // GET all users
 router.get('/users', isAdmin, async (req, res) => {

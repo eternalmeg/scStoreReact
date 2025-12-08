@@ -34,7 +34,7 @@ const Profile = () => {
 
                             <div className="cart-checkout-area">
 
-<img src="/assets/images/test2.webp"/>
+<img src="/assets/images/dafaultAvatar.png"/>
 
                                 <Link to="/cart" className="fz-1-banner-btn cart-checkout-btn">Edit Profile</Link>
                             </div>

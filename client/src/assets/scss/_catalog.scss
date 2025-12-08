@@ -1131,3 +1131,35 @@
     }
   }
 }
+
+.fz-single-product__img {
+  width: 100%;
+  height: 260px;         /* фиксирана височина → еднакви блокове */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f8f8;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.fz-single-product__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  padding: 10px;
+  aspect-ratio: unset !important;
+}
+
+.fz-single-product__img {
+  overflow: hidden; // важно – скрива излизането извън контейнера
+  border-radius: 8px; // опционално, ако искаш по-красиво
+}
+
+.fz-single-product__img img {
+  transition: transform 0.4s ease;
+}
+
+.fz-single-product__img:hover img {
+  transform: scale(1.08); // лек zoom
+}
+

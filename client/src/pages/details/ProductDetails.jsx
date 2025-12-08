@@ -177,7 +177,16 @@ const ProductDetails = () => {
                                         className={`tab-pane ${activeTab === 'review' ? 'show active' : ''}`}
                                     >
                                         <h4 className="reviews-title">Reviews</h4>
-                                        <p>No reviews yet.</p>
+                                        <div className="fz-product-details__actions mt-3">
+                                            <button
+                                                onClick={() => navigate(`/reviews/create`)}
+                                                className="fz-product-details__add-to-cart"
+                                            >
+                                                Leave a review
+                                            </button>
+                                        </div>
+                                        <p>No reviews yet. <Link to="/reviews/create">Be the first one to leave a
+                                            review!</Link></p>
                                     </Tab.Pane>
 
                                 </Tab.Content>

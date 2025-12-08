@@ -26,5 +26,16 @@ exports.remove = (id) => {
 };
 
 exports.search = (query) => {
-    return Device.find({ brand: { $regex: query, $options: "i" } });
+    const regex = new RegExp(query, "i"); // i = ignore case
+
+    return Device.find({
+        $or: [
+            { brand: regex },
+            { model: regex },
+            { sku: regex },
+            { shortDescription: regex },
+            { description: regex }
+        ]
+    });
 };
+

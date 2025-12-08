@@ -12,7 +12,7 @@ export function getLatest() {
 }
 
 export function getOne(id) {
-    return request(`${BASE_URL}/${id}/details`);
+    return request(`${BASE_URL}/${id}`);
 }
 
 export function createProduct(data) {

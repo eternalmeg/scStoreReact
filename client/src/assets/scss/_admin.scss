@@ -1,0 +1,36 @@
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.admin-table th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.edit-btn,
+.delete-btn {
+  margin-right: 10px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: #2a7bf6;
+  color: white;
+  border: none;
+}
+
+.delete-btn {
+  background: #d93333;
+  color: white;
+  border: none;
+}

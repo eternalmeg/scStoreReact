@@ -559,3 +559,40 @@
     margin-bottom: 15px;
   }
 }
+
+.img-main-wrapper {
+  width: 585px;
+  height: 585px;
+
+  @include lg {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+.img-main {
+  width: 100%;
+  height: 100%;
+  background-size: contain;        // <— НЕ се crop-ва, НЕ се разтяга
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.img-thumb-wrapper {
+  width: 120px;
+  height: 120px;
+}
+
+.img-thumb {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.slick-current .img-thumb {
+  border-color: $color-3;
+}

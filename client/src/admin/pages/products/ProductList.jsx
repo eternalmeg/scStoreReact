@@ -64,7 +64,7 @@ export default function ProductList() {
                         <td>{p.brand}</td>
                         <td>{p.model}</td>
                         <td>{p.sku}</td>
-                        <td>{p.price} €</td>
+                        <td>{p.price} $</td>
                         <td>{p.quantity}</td>
 
                         <td>
