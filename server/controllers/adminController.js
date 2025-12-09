@@ -3,6 +3,7 @@ const { isAdmin } = require('../middlewares/adminMiddleware');
 
 const Device = require('../models/Device');
 const User = require('../models/User');
+const Order = require('../models/Order');
 const Review = require('../models/Review');
 const bcrypt = require('bcrypt');
 
@@ -130,5 +131,85 @@ router.delete('/reviews/:id', isAdmin, async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);
     res.json({ message: "ReviewForm deleted" });
 });
+
+
+
+// --- ORDERS ROUTES --- //
+
+// Get all orders
+router.get("/orders", isAdmin, async (req, res) => {
+    try {
+        const orders = await Order.find()
+            .populate("user", "firstName lastName email")
+            .populate("items.device");
+
+        res.json(orders);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+router.get("/orders/:id", isAdmin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate("user", "firstName lastName email")
+            .populate("items.device");
+
+        res.json(order);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+
+router.patch('/orders/:id/status', isAdmin, async (req, res) => {
+    try {
+        const order = await Order.findByIdAndUpdate(
+            req.params.id,
+            { status: req.body.status },
+            { new: true }
+        ).populate("user");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.json(order); // <-- ВРЪЩАМЕ ЦЕЛИЯ ORDER
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+
+
+
+// DELETE ORDER (ADMIN ONLY)
+router.delete("/orders/:id", isAdmin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        // Връщаме стоката обратно в склада
+        for (const item of order.items) {
+            await Device.findByIdAndUpdate(item.device, {
+                $inc: { quantity: item.quantity }
+            });
+        }
+
+        await order.deleteOne();
+
+        res.json({ message: "Order deleted" });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+
+
+
+
 
 module.exports = router;

@@ -1,26 +1,35 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
+
 const Sidebar = () => {
     return (
-        <div
-            style={{
-                width: "220px",
-                background: "#111",
-                color: "#fff",
-                minHeight: "100vh",
-                padding: "20px"
-            }}
-        >
-            <h3>Admin Panel</h3>
+        <aside className="admin-sidebar">
+            <h2 className="admin-sidebar__title">Admin Panel</h2>
 
-            <nav className="admin-nav">
-                <NavLink to="/admin" end>Dashboard</NavLink>
-                <NavLink to="/admin/products">Products</NavLink>
-                <NavLink to="/admin/users">Users</NavLink>
-                <NavLink to="/admin/reviews">Reviews</NavLink>
+            <nav className="admin-sidebar__nav">
+                <NavLink end to="/admin" className="admin-link">
+                    Dashboard
+                </NavLink>
+
+                <NavLink to="/admin/products" className="admin-link">
+                    Products
+                </NavLink>
+
+                <NavLink to="/admin/users" className="admin-link">
+                    Users
+                </NavLink>
+
+                <NavLink to="/admin/reviews" className="admin-link">
+                    Reviews
+                </NavLink>
+
+
+                <NavLink to="/admin/orders" className="admin-link">
+                    Orders
+                </NavLink>
             </nav>
-        </div>
+        </aside>
     );
 };
 

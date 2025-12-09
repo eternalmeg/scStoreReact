@@ -34,3 +34,77 @@
   color: white;
   border: none;
 }
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.admin-actions a {
+  background: #222;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.admin-actions a:hover {
+  background: #e0ac00;
+  color: #000;
+}
+.admin-wrapper {
+  display: flex;
+}
+
+.admin-content {
+  flex-grow: 1;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.admin-inner {
+  padding: 20px 30px;
+}
+.admin-wrapper {
+  display: flex;
+}
+
+.admin-content {
+  flex-grow: 1;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.admin-inner {
+  padding: 20px 30px;
+}
+
+.status-badge {
+  display: inline-block;
+  min-width: 110px;
+  padding: 6px 12px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: #fff !important;
+}
+
+/* Цветове по статус */
+.status-pending {
+  background-color: #eab308;
+}
+
+.status-completed {
+  background-color: #22c55e;
+}
+
+.status-cancelled {
+  background-color: #dc2626;
+}
+
+

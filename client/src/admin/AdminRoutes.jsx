@@ -10,6 +10,7 @@ import UserEdit from "./pages/Users/UserEdit";
 import ReviewList from "./pages/Reviews/ReviewList";
 import UserForm from "./pages/users/UserForm.jsx";
 import AdminRoute from "../guards/AdminRoute";
+import AdminOrderList from "./pages/orders/AdminOrderList.jsx";
 
 export const AdminRoutes = (
     <Route
@@ -34,5 +35,11 @@ export const AdminRoutes = (
 
         {/* Reviews */}
         <Route path="reviews" element={<ReviewList />} />
+
+
+        {/* Orders */}
+
+        <Route path="orders" element={<AdminOrderList />} />
+
     </Route>
 );
