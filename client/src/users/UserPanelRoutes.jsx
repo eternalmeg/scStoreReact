@@ -10,7 +10,9 @@ import React from "react";
 import ReviewForm from "../layout/reviewForm/ReviewForm.jsx";
 import UserList from "../admin/pages/users/UserList.jsx";
 import MyReviews from "./pages/reviews/MyReviews.jsx";
-import ReviewEdit from "./pages/reviews/ReviewEdit.jsx"; // само логнати
+import ReviewEdit from "./pages/reviews/ReviewEdit.jsx";
+import OrderHistory from "./pages/orders/OrderHistory.jsx";
+import OrderDetails from "./pages/orders/OrderDetails.jsx";
 
 export const UserPanelRoutes = (
     <Route
@@ -27,5 +29,8 @@ export const UserPanelRoutes = (
         {/* User subpages */}
         <Route path="reviews" element={<MyReviews />} />
         <Route path="reviews/:id/edit" element={<ReviewEdit />} />
+        <Route path="orders" element={<OrderHistory />} />
+        <Route path="orders/:orderId" element={<OrderDetails />} />
+
     </Route>
 );

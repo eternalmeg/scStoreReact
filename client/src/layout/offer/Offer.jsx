@@ -10,7 +10,7 @@ const Offer = () => {
                         <div className="fz-5-cta-txt">
                             <h3>Lenovo products</h3>
                             <h2>Extra 30% off</h2>
-                            <Link to="/shop-2" className="fz-5-def-btn">
+                            <Link to="/catalog" className="fz-5-def-btn">
                                 Shop Now
                             </Link>
                         </div>

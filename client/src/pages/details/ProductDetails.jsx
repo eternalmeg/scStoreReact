@@ -7,17 +7,22 @@ import UserContext from "../../context/UserContext";
 import { toast } from "react-toastify";
 import ProductReview from "../../layout/review/ProductReview.jsx";
 import { getReviews } from "../../services/reviewService";
+import { addToCart } from "../../services/cartService";
 
 
 
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user, isAdmin } = useContext(UserContext);
+    const { user, isAdmin, updateCart } = useContext(UserContext);
 
     const [product, setProduct] = useState(null);
     const [activeTab, setActiveTab] = useState("description");
     const [reviews, setReviews] = useState([]);
+
+    const [quantity, setQuantity] = useState(1);
+
+
 
 
     useEffect(() => {
@@ -38,6 +43,24 @@ const ProductDetails = () => {
             })
             .catch(err => toast.error(err.message));
     }, [id]);
+
+
+    const handleAddToCart = async () => {
+        if (!user) {
+            toast.error("You must be logged in to add items to cart");
+            return;
+        }
+
+        try {
+            const updatedCart = await addToCart(product._id);
+            updateCart(updatedCart);
+
+            toast.success("Added to cart!");
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
 
 
 
@@ -132,13 +155,26 @@ const ProductDetails = () => {
                                         <button className="minus-btn cart-product__minus">
                                             <i className="fa-light fa-minus"></i>
                                         </button>
-                                        <input type="number" defaultValue="1" min="1" />
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                            className="cart-product-quantity-input"
+                                        />
+
                                         <button className="plus-btn cart-product__plus">
                                             <i className="fa-light fa-plus"></i>
                                         </button>
                                     </div>
 
-                                    <button className="fz-product-details__add-to-cart">Add to cart</button>
+                                    <button
+                                        className="fz-product-details__add-to-cart"
+                                        onClick={handleAddToCart}
+                                    >
+                                        Add to cart
+                                    </button>
+
 
                                     <button className="fz-product-details__add-to-wishlist">
                                         <i className="fa-light fa-heart"></i>

@@ -86,10 +86,11 @@ export default function Header() {
 
 
                     {isAuthenticated && (
-                        <button className="icon-btn">
+                        <Link to="/cart" className="icon-btn">
                             <i className="fa-light fa-shopping-bag"></i>
                             <span className="count">{user?.cart?.length ?? 0}</span>
-                        </button>
+                        </Link>
+
                     )}
 
 

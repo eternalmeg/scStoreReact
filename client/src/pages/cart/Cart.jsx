@@ -1,22 +1,83 @@
-import React from 'react'
-import {Link} from "react-router-dom";
+// src/components/cart/Cart.jsx
+import React, { useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
+import UserContext from "../../context/UserContext";
+import {
+    getCart,
+    updateQuantity as apiUpdateQuantity,
+    removeFromCart,
+    checkout as apiCheckout,
+} from "../../services/cartService";
+import { toast } from "react-toastify";
 
+export default function Cart() {
+    const { user, updateCart } = useContext(UserContext);
+    const cart = user?.cart || [];
 
-const Cart = ({ cartArray, remove, quantity }) => {
+    // 1) Зареждаме количката от BE при отваряне на страницата
+    useEffect(() => {
+        if (!user) return;
 
+        getCart()
+            .then(updateCart)
+            .catch((err) => toast.error(err.message));
+    }, [user?._id]);
 
+    // 2) Промяна на количество (и към BE)
+    const changeQuantity = async (deviceId, delta) => {
+        const item = cart.find((i) => i.device === deviceId);
+        if (!item) return;
 
+        const newQty = Math.max(1, item.quantity + delta);
+
+        try {
+            const serverCart = await apiUpdateQuantity(deviceId, newQty);
+            updateCart(serverCart);
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    // 3) Премахване на продукт
+    const handleRemove = async (deviceId) => {
+        try {
+            const serverCart = await removeFromCart(deviceId);
+            updateCart(serverCart);
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    // 4) Checkout
+    const handleCheckout = async () => {
+        try {
+            await apiCheckout();
+            updateCart([]); // изпразваме локалната количка
+            toast.success("Order created!");
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    // 5) Сметки
+    const subtotal = cart.reduce(
+        (sum, item) => sum + (item.price || 0) * item.quantity,
+        0
+    );
 
     return (
         <div>
+            {/* Breadcrumb */}
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
                     <div className="row justify-content-between align-items-center">
                         <div className="col-12">
                             <div className="breadcrumb-txt">
-                                <h1>Catalog</h1>
+                                <h1>Cart</h1>
                                 <ul className="fz-inner-page-breadcrumb-nav">
-                                    <li><Link to="/">Home</Link></li>
+                                    <li>
+                                        <Link to="/">Home</Link>
+                                    </li>
                                     <li className="current-page">Cart</li>
                                 </ul>
                             </div>
@@ -25,7 +86,7 @@ const Cart = ({ cartArray, remove, quantity }) => {
                 </div>
             </div>
 
-
+            {/* Cart content */}
             <div className="container">
                 <div className="cart-section">
                     <div className="cart-left inner-cart">
@@ -42,96 +103,121 @@ const Cart = ({ cartArray, remove, quantity }) => {
                                             <th>Remove</th>
                                         </tr>
 
-                                                <tr>
-                                                    <td>
-                                                        <div className="cart-product">
-                                                            <div className="cart-product__img">
-                                                                <img src="" alt="Product Image"/>
-                                                            </div>
-                                                            <div className="cart-product__txt">
-                                                                <h6>
-                                                                    <Link to="/shopDetails">name</Link>
-                                                                </h6>
-                                                            </div>
+                                        {cart.length === 0 && (
+                                            <tr>
+                                                <td colSpan="5">Your cart is empty.</td>
+                                            </tr>
+                                        )}
+
+                                        {cart.map((item) => (
+                                            <tr key={item.device}>
+                                                <td>
+                                                    <div className="cart-product">
+                                                        <div className="cart-product__img">
+                                                            {item.image && (
+                                                                <img src={item.image} alt={item.model} />
+                                                            )}
                                                         </div>
-                                                    </td>
-                                                    <td>$120</td>
-                                                    <td>
-                                                        <div className="cart-product__quantity">
-                                                            <div className="cart-product__quantity-btns">
-                                                                <button
-                                                                    className="cart-product__minus"
-
-                                                                >
-                                                                    <i className="fa-light fa-minus"></i>
-                                                                </button>
-                                                                <button
-                                                                    className="cart-product__plus"
-
-                                                                >
-                                                                    <i className="fa-light fa-plus"></i>
-                                                                </button>
-                                                            </div>
-                                                            <input
-                                                                type="number"
-                                                                name="product-quantity-input"
-                                                                className="cart-product-quantity-input"
-                                                                min="0"
-
-                                                            />
+                                                        <div className="cart-product__txt">
+                                                            <h6>
+                                                                <Link to={`/product/${item.device}`}>
+                                                                    {item.brand} {item.model}
+                                                                </Link>
+                                                            </h6>
                                                         </div>
-                                                    </td>
-                                                    <td>$120</td>
-                                                    <td>
-                                                        <button
-                                                            className="item-remove-btn"
+                                                    </div>
+                                                </td>
 
-                                                        >
-                                                            <i className="fa-light fa-xmark"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                <td>${item.price}</td>
 
+                                                <td>
+                                                    <div className="cart-product__quantity">
+                                                        <div className="cart-product__quantity-btns">
+                                                            <button
+                                                                className="cart-product__minus"
+                                                                onClick={() =>
+                                                                    changeQuantity(item.device, -1)
+                                                                }
+                                                            >
+                                                                <i className="fa-light fa-minus"></i>
+                                                            </button>
 
+                                                            <button
+                                                                className="cart-product__plus"
+                                                                onClick={() =>
+                                                                    changeQuantity(item.device, +1)
+                                                                }
+                                                            >
+                                                                <i className="fa-light fa-plus"></i>
+                                                            </button>
+                                                        </div>
+
+                                                        <input
+                                                            type="number"
+                                                            className="cart-product-quantity-input"
+                                                            min="1"
+                                                            value={item.quantity}
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </td>
+
+                                                <td>${(item.price || 0) * item.quantity}</td>
+
+                                                <td>
+                                                    <button
+                                                        className="item-remove-btn"
+                                                        onClick={() => handleRemove(item.device)}
+                                                    >
+                                                        <i className="fa-light fa-xmark"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
                                         </tbody>
                                     </table>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
 
+                    {/* Billing summary */}
                     <div className="cart-checkout-area">
                         <h4 className="cart-checkout-area__title">Billing Summary</h4>
 
                         <ul className="checkout-summary">
                             <li>
                                 <span className="checkout-summary__key">Subtotal</span>
-                                <span className="checkout-summary__value"><span>$</span>120</span>
+                                <span className="checkout-summary__value">
+                  <span>$</span>
+                                    {subtotal}
+                </span>
                             </li>
 
                             <li>
                                 <span className="checkout-summary__key">Shipping</span>
-                                <span className="checkout-summary__value"><span>$</span>test</span>
+                                <span className="checkout-summary__value">Free</span>
                             </li>
-
-
 
                             <li className="cart-checkout-total">
                                 <span className="checkout-summary__key">Total</span>
-                                <span className="checkout-summary__value"><span>$</span>120</span>
+                                <span className="checkout-summary__value">
+                  <span>$</span>
+                                    {subtotal}
+                </span>
                             </li>
                         </ul>
 
-
-                        <Link to="/checkout" className="fz-1-banner-btn cart-checkout-btn">Proceed to checkout</Link>
+                        <button
+                            onClick={handleCheckout}
+                            className="fz-1-banner-btn cart-checkout-btn"
+                            disabled={cart.length === 0}
+                        >
+                            Proceed To
+                        </button>
                     </div>
                 </div>
             </div>
-
         </div>
-    )
+    );
 }
-
-export default Cart

@@ -8,16 +8,16 @@ function setCors() {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
 
-
+        res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE, PATCH");
 
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            req.headers["access-control-request-headers"] ||
+            "Content-Type, Authorization, X-Authorization"
+        );
 
-        res.setHeader("Access-Control-Allow-Headers", "Content-type, X-Authorization");
-
-
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-
-
+        // Stop OPTIONS here
         if (req.method === "OPTIONS") {
             return res.status(200).end();
         }
@@ -26,6 +26,4 @@ function setCors() {
     };
 }
 
-module.exports = {
-    setCors
-};
+module.exports = { setCors };
