@@ -52,7 +52,8 @@ const ProductDetails = () => {
         }
 
         try {
-            const updatedCart = await addToCart(product._id);
+            const updatedCart = await addToCart(product._id, quantity);
+
             updateCart(updatedCart);
 
             toast.success("Added to cart!");
@@ -152,21 +153,37 @@ const ProductDetails = () => {
 
                                 <div className="fz-product-details__actions">
                                     <div className="fz-product-details__quantity cart-product__quantity">
-                                        <button className="minus-btn cart-product__minus">
+
+                                        <button
+                                            className="minus-btn cart-product__minus"
+                                            onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                        >
                                             <i className="fa-light fa-minus"></i>
                                         </button>
+
                                         <input
                                             type="number"
                                             min="1"
+                                            max={product.quantity}
                                             value={quantity}
-                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                            onChange={(e) => {
+                                                let val = Number(e.target.value);
+                                                if (isNaN(val)) val = 1;
+                                                val = Math.max(1, Math.min(val, product.quantity));
+                                                setQuantity(val);
+                                            }}
                                             className="cart-product-quantity-input"
                                         />
 
-                                        <button className="plus-btn cart-product__plus">
+                                        <button
+                                            className="plus-btn cart-product__plus"
+                                            onClick={() => setQuantity(q => Math.min(product.quantity, q + 1))}
+                                        >
                                             <i className="fa-light fa-plus"></i>
                                         </button>
+
                                     </div>
+
 
                                     <button
                                         className="fz-product-details__add-to-cart"

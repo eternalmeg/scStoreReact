@@ -27,33 +27,36 @@ router.get("/", isAuth, async (req, res) => {
 
 
 router.post("/add", isAuth, async (req, res) => {
-    const { productId } = req.body;
+    const { productId, quantity } = req.body;
 
-    // Опит за увеличаване на quantity ако продуктът вече е в количката
+    // quantity трябва да е поне 1
+    const qty = Math.max(1, Number(quantity) || 1);
+
+    // 1️⃣ Опитваме се да увеличим qty ако продуктът е в количката
     const updated = await User.updateOne(
         { _id: req.user._id, "cart.device": productId },
-        { $inc: { "cart.$.quantity": 1 } }
+        { $inc: { "cart.$.quantity": qty } }
     );
 
-    // Ако matchedCount === 0 → продуктът не е бил в количката → добавяме нов
+    // 2️⃣ Ако продуктът НЕ е бил в количката → добавяме го
     if (updated.matchedCount === 0) {
         await User.updateOne(
             { _id: req.user._id },
-            { $push: { cart: { device: productId, quantity: 1 } } }
+            { $push: { cart: { device: productId, quantity: qty } } }
         );
     }
 
-    // Връщаме обновената количка
-    const populated = await User.findById(req.user._id).populate("cart.device");
+    // 3️⃣ Връщаме обновената количка
+    const user = await User.findById(req.user._id).populate("cart.device");
 
     res.json(
-        populated.cart.map(i => ({
-            device: i.device._id,
-            brand: i.device.brand,
-            model: i.device.model,
-            price: i.device.price,
-            image: i.device.images?.[0] || "",
-            quantity: i.quantity
+        user.cart.map(item => ({
+            device: item.device._id,
+            brand: item.device.brand,
+            model: item.device.model,
+            price: item.device.price,
+            image: item.device.images?.[0] || "",
+            quantity: item.quantity
         }))
     );
 });

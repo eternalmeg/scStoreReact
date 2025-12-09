@@ -2,8 +2,8 @@ import { request } from "./requestHelper";
 
 const BASE = "http://localhost:3000/api/cart";
 
-export const addToCart = (productId) =>
-    request(`${BASE}/add`, "POST", { productId });
+export const addToCart = (productId,  quantity = 1) =>
+    request(`${BASE}/add`, "POST", { productId, quantity });
 
 export const updateQuantity = (productId, quantity) =>
     request(`${BASE}/update`, "PUT", { productId, quantity });
