@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { getAllUsers, deleteUser } from "../../../services/userService";
+import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { getAllUsers, deleteUser } from "../../../services/userService";
+import useFetch from "../../../hooks/useFetch";
+
 export default function UserList() {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadUsers();
-    }, []);
-
-    const loadUsers = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllUsers();
-            setUsers(data);
-        } catch (err) {
-            toast.error("Failed to load users");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // ✔ Зареждаме всички потребители чрез useFetch
+    const { data: users, setData: setUsers, loading, error } =
+        useFetch(() => getAllUsers(), []);
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
@@ -29,7 +17,10 @@ export default function UserList() {
         try {
             await deleteUser(id);
             toast.success("User deleted");
-            setUsers(users.filter(u => u._id !== id));
+
+            // премахваме от локалния state чрез setData
+            setUsers(prev => prev.filter(u => u._id !== id));
+
         } catch (err) {
             toast.error("Error deleting user");
         }
@@ -37,16 +28,24 @@ export default function UserList() {
 
     return (
         <div className="container">
+
             <div className="d-flex justify-content-between align-items-center my-3">
                 <h2>User Management</h2>
+
                 <Link to="/admin/users/create" className="btn btn-primary">
                     + Create User
                 </Link>
             </div>
 
+
+            {error && <p className="text-danger">{error}</p>}
+
+
             {loading && <h4>Loading...</h4>}
 
+
             {!loading && users.length === 0 && <p>No users found.</p>}
+
 
             {!loading && users.length > 0 && (
                 <table className="table table-striped">
@@ -90,6 +89,7 @@ export default function UserList() {
                     </tbody>
                 </table>
             )}
+
         </div>
     );
 }

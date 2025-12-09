@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
-import useRequest from "./useRequest";
 
-export default function useFetch(url) {
-    const request = useRequest();
+export default function useFetch(asyncCallback, dependencies = []) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!url) return;
+        let isActive = true;
 
-        request(url)
-            .then(result => setData(result))
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false));
+        setLoading(true);
 
-    }, [url]);
+        asyncCallback()
+            .then(result => {
+                if (isActive) setData(result);
+            })
+            .catch(err => {
+                if (isActive) setError(err);
+            })
+            .finally(() => {
+                if (isActive) setLoading(false);
+            });
 
-    return {
-        data,
-        loading,
-        error,
-        setData
-    };
+        return () => {
+            isActive = false;
+        };
+    }, dependencies);
+
+    return { data, setData, loading, error };
 }

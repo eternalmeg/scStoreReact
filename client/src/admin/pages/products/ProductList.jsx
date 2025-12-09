@@ -1,39 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import * as productService from "../../../services/productService";
+import useFetch from "../../../hooks/useFetch";
 
 export default function ProductList() {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const {
+        data: products,
+        setData: setProducts,
+        loading,
+        error
+    } = useFetch(() => productService.getAll(), []);
 
-    useEffect(() => {
-        loadProducts();
-    }, []);
-
-    async function loadProducts() {
-        try {
-            const data = await productService.getAll();
-            setProducts(data);
-        } catch (err) {
-            console.error(err);
-            alert("Error loading products");
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function handleDelete(id) {
+    const handleDelete = async (id) => {
         if (!confirm("Are you sure you want to delete this product?")) return;
 
         try {
             await productService.deleteProduct(id);
-            setProducts(products.filter(p => p._id !== id)); // remove from UI
+            setProducts(prev => prev.filter(p => p._id !== id));
         } catch (err) {
             alert(err.message);
         }
-    }
+    };
 
     if (loading) return <h3>Loading products...</h3>;
+    if (error) return <p>Error loading products</p>;
 
     return (
         <div className="admin-product-list container">
@@ -58,7 +48,7 @@ export default function ProductList() {
                 </thead>
 
                 <tbody>
-                {products.map((p, index) => (
+                {products?.map((p, index) => (
                     <tr key={p._id}>
                         <td>{index + 1}</td>
                         <td>{p.brand}</td>
@@ -66,18 +56,17 @@ export default function ProductList() {
                         <td>{p.sku}</td>
                         <td>{p.price} $</td>
                         <td>{p.quantity}</td>
-
                         <td>
                             <Link
                                 to={`/admin/products/${p._id}`}
-                                className="btn btn-sm btn-warning me-2"
+                                className="btn btn-warning btn-sm me-2"
                             >
                                 Edit
                             </Link>
 
                             <button
                                 onClick={() => handleDelete(p._id)}
-                                className="btn btn-sm btn-danger"
+                                className="btn btn-danger btn-sm"
                             >
                                 Delete
                             </button>
@@ -87,7 +76,7 @@ export default function ProductList() {
                 </tbody>
             </table>
 
-            {products.length === 0 && <p>No products found.</p>}
+            {products?.length === 0 && <p>No products found.</p>}
         </div>
     );
 }
