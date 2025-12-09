@@ -5,13 +5,11 @@ import { toast } from "react-toastify";
 export default function AdminOrderList() {
     const [orders, setOrders] = useState([]);
 
-
     const loadOrders = () => {
         getAllOrders()
             .then(setOrders)
             .catch(err => toast.error(err.message));
     };
-
 
     useEffect(() => {
         loadOrders();
@@ -19,13 +17,9 @@ export default function AdminOrderList() {
 
     const changeStatus = async (orderId, status) => {
         try {
-            const updatedOrder = await updateOrderStatus(orderId, status);
-
-            setOrders(prev =>
-                prev.map(o => (o._id === updatedOrder._id ? updatedOrder : o))
-            );
-
+            await updateOrderStatus(orderId, status);
             toast.success("Status updated!");
+            loadOrders();   
         } catch (err) {
             toast.error(err.message);
         }
@@ -40,6 +34,7 @@ export default function AdminOrderList() {
                 <tr>
                     <th>#</th>
                     <th>User</th>
+                    <th>Products</th>   {/* 👈 Новата колона */}
                     <th>Total Price</th>
                     <th>Status</th>
                     <th>Placed On</th>
@@ -52,22 +47,43 @@ export default function AdminOrderList() {
                     <tr key={order._id}>
                         <td>{i + 1}</td>
 
+                        {/* USER INFO */}
                         <td>
                             {order.user?.firstName} {order.user?.lastName}
                             <br />
                             <small>{order.user?.email}</small>
                         </td>
 
+                        {/* 👇 PRODUCTS LIST (brand, model, qty, subtotal) */}
+                        <td>
+                            {order.items.map(item => (
+                                <div key={item.device._id} style={{ marginBottom: "6px" }}>
+                                    <strong>{item.device.brand} {item.device.model}</strong>
+                                    <br />
+                                    Qty: {item.quantity} × ${item.device.price}
+                                    <br />
+                                    <small>
+                                        Subtotal: <strong>${item.quantity * item.device.price}</strong>
+                                    </small>
+                                    <hr />
+                                </div>
+                            ))}
+                        </td>
+
+                        {/* TOTAL */}
                         <td>${order.totalPrice}</td>
 
+                        {/* STATUS */}
                         <td>
                                 <span className={`status-badge status-${order.status}`}>
                                     {order.status.toUpperCase()}
                                 </span>
                         </td>
 
+                        {/* DATE */}
                         <td>{new Date(order.createdAt).toLocaleDateString()}</td>
 
+                        {/* ACTIONS */}
                         <td>
                             <button
                                 className="btn btn-success btn-sm me-2"
@@ -90,7 +106,7 @@ export default function AdminOrderList() {
                                 Cancel
                             </button>
 
-
+                            {/* DELETE ORDER */}
                             <button
                                 className="btn btn-dark btn-sm"
                                 onClick={async () => {
@@ -99,7 +115,6 @@ export default function AdminOrderList() {
                                     try {
                                         await deleteOrder(order._id);
                                         toast.success("Order deleted!");
-
                                         loadOrders();
                                     } catch (err) {
                                         toast.error(err.message);
