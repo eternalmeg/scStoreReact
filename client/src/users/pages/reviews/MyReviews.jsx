@@ -1,17 +1,12 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import {deleteReview, getUserReviews } from "../../../services/reviewService.js";
-import { useContext } from "react";
+import { deleteReview, getUserReviews } from "../../../services/reviewService.js";
 import UserContext from "../../../context/UserContext";
-
 
 const MyReviews = () => {
     const [reviews, setReviews] = useState([]);
-
     const { user } = useContext(UserContext);
-
 
     useEffect(() => {
         getUserReviews()
@@ -42,16 +37,24 @@ const MyReviews = () => {
                     <div className="col-xl-4 col-lg-6 col-md-6" key={review._id}>
                         <div className="user-review-card">
 
+
                             <div className="my-review-card__img">
-                            <img src={review.device.images[0]} alt={review.device.model}/>
+                                <img
+                                    src={review.device?.images?.[0] || "/assets/images/no-image.png"}
+                                    alt={review.device?.model || "Deleted product"}
+                                />
                             </div>
+
 
                             <div className="review-product-name">
-                                {review.device.brand} {review.device.model}
+                                {review.device
+                                    ? `${review.device.brand} ${review.device.model}`
+                                    : "Product no longer exists"}
                             </div>
 
+
                             <div className="review-stars">
-                                {Array.from({length: 5}).map((_, i) => (
+                                {Array.from({ length: 5 }).map((_, i) => (
                                     <i
                                         key={i}
                                         className={`fa-${i < review.rating ? "solid" : "light"} fa-star`}
@@ -62,9 +65,11 @@ const MyReviews = () => {
                             <div className="review-comment">{review.comment}</div>
 
                             <div className="review-date">
-                                <small>Posted on: {new Date(review.createdAt).toLocaleDateString("bg-BG")}</small>
+                                <small>
+                                    Posted on:{" "}
+                                    {new Date(review.createdAt).toLocaleDateString("bg-BG")}
+                                </small>
                             </div>
-
 
                             <div className="review-actions">
                                 <Link to={`/user/reviews/${review._id}/edit`}>Edit</Link>

@@ -123,9 +123,13 @@ router.delete('/users/:id', isAdmin, async (req, res) => {
 // --- REVIEWS ROUTES --- //
 
 router.get('/reviews', isAdmin, async (req, res) => {
-    const reviews = await Review.find().populate("author device");
+    const reviews = await Review.find()
+        .populate("user")
+        .populate("device");
+
     res.json(reviews);
 });
+
 
 router.delete('/reviews/:id', isAdmin, async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);

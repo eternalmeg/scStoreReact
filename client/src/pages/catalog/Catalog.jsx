@@ -1,40 +1,99 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {getAll, searchByBrand} from "../../services/productService.js";
-
-
-
+import { getAll } from "../../services/productService.js";
+import CatalogSidebar from "../../layout/catalogSidebar/CatalogSidebar.jsx";
 
 const Catalog = () => {
-    const [products, setProducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+
     const [searchValue, setSearchValue] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [activeCategory, setActiveCategory] = useState(null);
+
     const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         loadAllProducts();
     }, []);
 
-    const loadAllProducts = () => {
+    const loadAllProducts = async () => {
         setLoading(true);
-        getAll()
-            .then(data => {
-                setProducts(data);
-            })
-            .finally(() => setLoading(false));
-    };
-
-    const handleSearch = async (e) => {
-        e.preventDefault();
-
-        if (searchValue.trim() === "") {
-            return loadAllProducts(); // reset
-        }
 
         try {
-            const results = await searchByBrand(searchValue);
-            setProducts(results);
-        } catch (err) {
-            console.error(err);
+            const data = await getAll();
+
+            setAllProducts(data);
+            setFilteredProducts(data);
+
+            // extract categories dynamically
+            const catMap = {};
+
+            data.forEach(p => {
+                const c = p.category || "Uncategorized";
+                catMap[c] = (catMap[c] || 0) + 1;
+            });
+
+            const formatted = Object.keys(catMap).map(k => ({
+                name: k,
+                count: catMap[k]
+            }));
+
+            setCategories(formatted);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const applyFilters = (category, search) => {
+        let result = [...allProducts];
+
+
+        if (category) {
+            result = result.filter(p => p.category === category);
+        }
+
+
+        const query = search.trim().toLowerCase();
+
+
+        if (query !== "") {
+            result = result.filter(p => {
+                return (
+                    p.brand.toLowerCase().includes(query) ||
+                    p.model.toLowerCase().includes(query) ||
+                    (p.category?.toLowerCase().includes(query)) ||
+                    (p.shortDescription?.toLowerCase().includes(query)) ||
+                    (p.description?.toLowerCase().includes(query))
+                );
+            });
+        }
+
+        setFilteredProducts(result);
+    };
+
+
+
+    const handleCategorySelect = (category) => {
+        setActiveCategory(category);
+        applyFilters(category, searchValue);
+    };
+
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        applyFilters(activeCategory, searchValue);
+    };
+
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchValue(value);
+
+        if (value === "") {
+            applyFilters(activeCategory, "");
         }
     };
 
@@ -51,42 +110,48 @@ const Catalog = () => {
                 <div className="container">
                     <div className="row gy-5 justify-content-center">
 
-                        {/* Sidebar */}
+
                         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-8">
                             <div className="fz-sidebar">
+
+
                                 <section className="sidebar-single-area product-search-area">
                                     <h3 className="sidebar-single-area__title">Search Product</h3>
+
                                     <form className="fz-product-search-form" onSubmit={handleSearch}>
                                         <input
                                             type="search"
                                             placeholder="Search products…"
                                             value={searchValue}
-                                            onChange={(e) => {
-                                                setSearchValue(e.target.value);
-                                                if (e.target.value === "") {
-                                                    loadAllProducts();
-                                                }
-                                            }}
+                                            onChange={handleSearchChange}
                                         />
                                         <button type="submit">
                                             <i className="fa-light fa-magnifying-glass"></i>
                                         </button>
                                     </form>
                                 </section>
+
+                                {/* Categories */}
+                                <CatalogSidebar
+                                    categories={categories}
+                                    activeCategory={activeCategory}
+                                    onCategorySelect={handleCategorySelect}
+                                />
+
                             </div>
                         </div>
 
-                        {/* Product Grid */}
+
                         <div className="col-xl-9 col-lg-8">
                             <div className="row">
 
                                 {loading && <p>Loading...</p>}
 
-                                {!loading && products.length === 0 && (
+                                {!loading && filteredProducts.length === 0 && (
                                     <p>No products found.</p>
                                 )}
 
-                                {!loading && products.map((p) => (
+                                {filteredProducts.map((p) => (
                                     <div className="col-xl-4 col-md-4 col-6" key={p._id}>
                                         <div className="fz-1-single-product">
 
@@ -98,7 +163,8 @@ const Catalog = () => {
                                             </div>
 
                                             <div className="fz-single-product__txt">
-                                                <Link to={`/details/${p._id}`} className="fz-single-product__title">
+                                                <Link to={`/details/${p._id}`}
+                                                      className="fz-single-product__title">
                                                     {p.brand} {p.model}
                                                 </Link>
 

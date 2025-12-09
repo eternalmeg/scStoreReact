@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../../../services/userService";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -36,15 +36,20 @@ export default function UserList() {
     };
 
     return (
-        <div className="admin-page">
-            <h2>User Management</h2>
+        <div className="container">
+            <div className="d-flex justify-content-between align-items-center my-3">
+                <h2>User Management</h2>
+                <Link to="/admin/users/create" className="btn btn-primary">
+                    + Create User
+                </Link>
+            </div>
 
-            {loading && <p>Loading...</p>}
+            {loading && <h4>Loading...</h4>}
 
             {!loading && users.length === 0 && <p>No users found.</p>}
 
             {!loading && users.length > 0 && (
-                <table className="admin-table">
+                <table className="table table-striped">
                     <thead>
                     <tr>
                         <th>First name</th>
@@ -64,16 +69,17 @@ export default function UserList() {
                             <td>{user.email}</td>
                             <td>{user.role}</td>
                             <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+
                             <td>
                                 <Link
                                     to={`/admin/users/${user._id}`}
-                                    className="edit-btn"
+                                    className="btn btn-sm btn-warning me-2"
                                 >
                                     Edit
                                 </Link>
 
                                 <button
-                                    className="delete-btn"
+                                    className="btn btn-sm btn-danger"
                                     onClick={() => handleDelete(user._id)}
                                 >
                                     Delete
@@ -87,4 +93,3 @@ export default function UserList() {
         </div>
     );
 }
-

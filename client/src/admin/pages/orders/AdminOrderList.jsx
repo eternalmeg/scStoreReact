@@ -19,7 +19,7 @@ export default function AdminOrderList() {
         try {
             await updateOrderStatus(orderId, status);
             toast.success("Status updated!");
-            loadOrders();   
+            loadOrders();
         } catch (err) {
             toast.error(err.message);
         }
