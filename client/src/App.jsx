@@ -51,6 +51,7 @@ function App() {
             <Header />
 
             <main className="fz-5-body">
+
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />

@@ -7,10 +7,18 @@ https://scstorereact-client.onrender.com
 
 NOTE!!! This app is deployed on Render free plan. It needs time to wake up the server, it may take about min..... !!!!
 
+for testing admin:
+user: admin@scstore.com
+pass: 123456
+
+*The application uses a Weather Widget that displays the current temperature for the user's city.
+To detect your city automatically, the app requests browser geolocation permission.
+If you allow access - your actual city and local temperature will be shown.
+This feature is optional and does not affect any other part of the application.
+
 Features:
 **Authentication & Users**
 - Register and Login with JWT authentication
-- Persistent login via HTTP-only cookies
 - Protected routes based on user role (User/Admin)
 - User profile data & logout functionality
 
@@ -78,6 +86,3 @@ run commands:
 2. for client: npm run dev
 
 
-for testing admin:
-user: admin@scstore.com
-pass: 123456
