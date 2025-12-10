@@ -27,7 +27,7 @@ const About = () => (
                     <div className="row gy-3 gy-sm-4 align-items-center">
                         <div className="col-xl-6 col-lg-6">
                             <div className="fz-about-store-img">
-                                <img src="/assets/images/me.JPG" alt="House Door Image"/>
+                                <img src="/assets/images/cat.jpg" alt="House Door Image"/>
                             </div>
                         </div>
 

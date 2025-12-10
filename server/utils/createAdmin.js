@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
-mongoose.connect('mongodb://127.0.0.1:27017/scStoreReact')
+mongoose.connect(process.env.PRODUCTION_DATABASE_URL)
     .then(async () => {
 
         const hashed = await bcrypt.hash('admin123', 12);
@@ -13,7 +14,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/scStoreReact')
             email: 'admin@scstore.com',
             phone: '000000000',
             role: 'admin',
-            password: '123456'
+            password: "123456"
         });
 
         console.log("Admin created!");
