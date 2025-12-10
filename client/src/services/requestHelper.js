@@ -23,14 +23,14 @@ export async function request(url, method = "GET", body) {
 
             let err = new Error(error.message);
 
-            // 🟡 Добавяме правилен тип според статуса
+
             if (response.status === 400) err.type = "validation";
             if (response.status === 401) err.type = "auth";
             if (response.status === 403) err.type = "forbidden";
             if (response.status === 404) err.type = "notfound";
             if (response.status >= 500) err.type = "server";
 
-            // 🟥 Fatal ли е?
+
             if (["server", "forbidden", "notfound"].includes(err.type)) {
                 triggerGlobalError(err.message);
             }
