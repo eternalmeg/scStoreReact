@@ -26,6 +26,6 @@ app.use('/api', routs);
 
 
 
-mongoose.connect(localDbUrl);
+mongoose.connect(productionDb);
 mongoose.connection.on('connected', () => console.log('connected to db'));
 app.listen(port,  ()=> console.log(`Server is listening on port: ${port}`));
