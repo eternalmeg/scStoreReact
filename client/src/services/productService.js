@@ -33,6 +33,11 @@ export function searchByBrand(brand) {
     return request(`${BASE_URL}/devices/search/${brand}`);
 }
 
+export async function searchProducts(query) {
+    return request(`${BASEURL}/devices/search?query=${encodeURIComponent(query)}`);
+}
+
+
 
 
 

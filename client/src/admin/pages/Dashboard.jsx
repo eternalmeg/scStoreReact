@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Dashboard() {
     return (
         <div className="admin-dashboard container">
-            <h1>Admin Panel</h1>
+
 
             <div className="admin-actions">
                 <Link to="/admin/products">Manage Products</Link>

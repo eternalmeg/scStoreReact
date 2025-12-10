@@ -102,9 +102,20 @@ const Catalog = () => {
             {/* Breadcrumb */}
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
-                    <h1>Catalog</h1>
+                    <div className="row justify-content-between align-items-center">
+                        <div className="col-12">
+                            <div className="breadcrumb-txt">
+                                <h1>Catalog</h1>
+                                <ul className="fz-inner-page-breadcrumb-nav">
+                                    <li><Link to="/">Home</Link></li>
+                                    <li className="current-page">Catalog</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             <div className="shop-area">
                 <div className="container">

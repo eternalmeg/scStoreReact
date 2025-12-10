@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const deviceService = require("../services/deviceService");
 const { isAdmin } = require("../middlewares/adminMiddleware");
+const Device = require("../models/Device");
 
 
 router.get("/latest", async (req, res) => {
@@ -20,6 +21,29 @@ router.get("/", async (req, res) => {
         res.json(devices);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+});
+
+router.get("/search", async (req, res) => {
+    try {
+        const query = req.query.query?.toLowerCase() || "";
+
+        if (!query) return res.json([]);
+
+        const products = await Device.find({
+            $or: [
+                { brand: { $regex: query, $options: "i" } },
+                { model: { $regex: query, $options: "i" } },
+                { category: { $regex: query, $options: "i" } },
+                { shortDescription: { $regex: query, $options: "i" } },
+                { description: { $regex: query, $options: "i" } }
+            ]
+        });
+
+        res.json(products);
+
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
     }
 });
 
@@ -55,6 +79,8 @@ router.put("/:id", isAdmin, async (req, res) => {
 });
 
 
+
+
 router.delete("/:id", isAdmin, async (req, res) => {
     try {
         await deviceService.remove(req.params.id);
@@ -63,6 +89,9 @@ router.delete("/:id", isAdmin, async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+
+
 
 
 router.get("/search/:query", async (req, res) => {

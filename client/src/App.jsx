@@ -23,6 +23,7 @@ import {wakeServer} from "./utils/WakeServerHelper.js";
 import {BASEURL} from "./constants/constants.js";
 import StartupLoader from "./layout/startupLoader/StartupLoader.jsx";
 import About from "./pages/about/About.jsx";
+import SearchResults from "./pages/searchResults/SearchResults.jsx";
 
 
 function App() {
@@ -58,6 +59,8 @@ function App() {
                     <Route path="/details/:id" element={<ProductDetails />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/about" element={<About />} />
+                    <Route path="/search" element={<SearchResults />} />
+
 
                     <Route
                         path="/product/:id/review/create"
