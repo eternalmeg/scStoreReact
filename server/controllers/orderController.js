@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { isAuth } = require("../middlewares/authMiddleWare");
+const { isAuth } = require("../middlewares/authMiddleware");
 const Order = require("../models/Order");
 const Device = require("../models/Device")
 

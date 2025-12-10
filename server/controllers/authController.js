@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const authService = require('../services/authService');
-const { isAuth } = require("../middlewares/authMiddleWare");
+const { isAuth } = require("../middlewares/authMiddleware");
 const sanitizeMiddleware = require('../middlewares/sanitizeMiddleware');
 
 
