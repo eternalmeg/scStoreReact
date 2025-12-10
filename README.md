@@ -5,6 +5,8 @@ Live Demo
 
 https://scstorereact-client.onrender.com
 
+NOTE!!! This app is deployed on Render free plan. It needs time to wake up the server, it may take about min..... !!!!
+
 Features:
 **Authentication & Users**
 - Register and Login with JWT authentication
