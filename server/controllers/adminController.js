@@ -115,9 +115,29 @@ router.put('/users/:id', isAdmin, async (req, res) => {
 
 // DELETE user
 router.delete('/users/:id', isAdmin, async (req, res) => {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User deleted" });
+    try {
+        const userId = req.params.id;
+        const currentAdminId = req.user._id.toString();
+
+        // 🚫 Prevent deleting yourself
+        if (userId === currentAdminId) {
+            return res.status(400).json({ message: "Admin cannot delete themselves." });
+        }
+
+        const user = await User.findByIdAndDelete(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ message: "User deleted" });
+
+    } catch (err) {
+        console.error("Delete user error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
 });
+
 
 
 // --- REVIEWS ROUTES --- //

@@ -18,6 +18,7 @@
     padding: 12px 30px;
     max-width: 1300px;
     margin: 0 auto;
+    height: 90px;
   }
 
   /* -----------------------------------
@@ -25,7 +26,9 @@
   ----------------------------------- */
   .header-logo {
     img {
-      height: 55px;
+      max-height: 90px;
+      width: auto;
+      object-fit: contain;
       display: block;
     }
   }
@@ -51,12 +54,12 @@
     }
 
     &.open {
-      /* Mobile styling applied inside media query */
+      /* Mobile style inside media query */
     }
   }
 
   /* -----------------------------------
-     ACTIONS (SEARCH, ICON BUTTONS)
+     ACTIONS (SEARCH, CART, BURGER)
   ----------------------------------- */
   .header-actions {
     display: flex;
@@ -149,7 +152,7 @@
         display: flex;
         flex-direction: column;
         position: absolute;
-        top: 75px;
+        top: 90px;
         left: 0;
         width: 100%;
         padding: 25px;

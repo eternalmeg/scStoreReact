@@ -4,9 +4,18 @@ import { toast } from "react-toastify";
 import { getUserById, updateUser } from "../../../services/userService";
 import { Form } from "react-bootstrap";
 import { useError } from "../../../context/ErrorContext.jsx";
+import UserContext from "../../../context/UserContext.jsx";
+import { useContext } from "react";
+
 
 export default function UserEdit() {
+    const { user: currentUser } = useContext(UserContext);
+
+
+
+
     const { id } = useParams();
+    const isEditingSelf = currentUser?._id === id;
     const navigate = useNavigate();
     const { throwError } = useError();
 
@@ -19,9 +28,11 @@ export default function UserEdit() {
         password: ""
     });
 
+    const editingAdmin = formData.role === "admin";
+
     const [loading, setLoading] = useState(true);
 
-    // Load user data
+
     useEffect(() => {
         getUserById(id)
             .then(data => {
@@ -35,7 +46,7 @@ export default function UserEdit() {
                 });
             })
             .catch(err => {
-                // serious errors → modal
+
                 if (["server", "forbidden", "notfound"].includes(err.type)) {
                     return throwError(err.message);
                 }
@@ -51,6 +62,10 @@ export default function UserEdit() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isEditingSelf && editingAdmin) {
+            delete payload.password;
+            payload.role = "admin";
+        }
 
         const payload = { ...formData };
         if (!payload.password) delete payload.password;
@@ -65,7 +80,7 @@ export default function UserEdit() {
                 return toast.error(err.message);
             }
 
-            // Fatal → global modal
+
             if (["server", "forbidden", "notfound"].includes(err.type)) {
                 return throwError(err.message);
             }
@@ -127,12 +142,13 @@ export default function UserEdit() {
                                 />
                             </div>
 
-                            {/* ROLE */}
+
                             <div className="col-6">
                                 <Form.Select
                                     name="role"
                                     value={formData.role}
                                     onChange={handleChange}
+                                    disabled={isEditingSelf && editingAdmin}
                                 >
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
@@ -144,9 +160,14 @@ export default function UserEdit() {
                                 <input
                                     type="password"
                                     name="password"
-                                    placeholder="New Password (optional)"
+                                    placeholder={
+                                        isEditingSelf && editingAdmin
+                                            ? "Admin password cannot be changed"
+                                            : "New Password (optional)"
+                                    }
                                     value={formData.password}
                                     onChange={handleChange}
+                                    disabled={isEditingSelf && editingAdmin}
                                 />
                             </div>
 
