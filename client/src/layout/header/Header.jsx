@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import UserContext from "../../context/UserContext.jsx";
 import { BASEURL } from "../../constants/constants.js";
+import WeatherWidget from "../weatherWidget/WeatherWidget.jsx";
 
 const BASE_URL = BASEURL;
 
@@ -68,7 +69,7 @@ export default function Header() {
 
                 <div className="header-actions">
 
-
+                    <WeatherWidget />
                     <form className="search-form" onSubmit={handleSearch}>
                         <input
                             type="text"
