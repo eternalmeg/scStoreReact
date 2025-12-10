@@ -1,6 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import UserContext from "../../context/UserContext.jsx";
+import {BASEURL} from "../../constants/constants.js";
+
+const BASE_URL = BASEURL;
+
 
 
 export default function Header() {
@@ -10,12 +14,14 @@ export default function Header() {
 
     const handleLogout = async () => {
         try {
-            await fetch("http://localhost:3000/api/auth/logout", {
+            await fetch(`${BASE_URL}/auth/logout`, {
                 method: "POST",
                 credentials: "include",
             });
 
             logout();
+            navigate('/login');
+
         } catch (err) {
             console.log("Logout error:", err);
         }
@@ -38,7 +44,7 @@ export default function Header() {
                     <Link to="/">Home</Link>
                     <Link to="/catalog">Catalog</Link>
                     <Link to="/about">About</Link>
-                    <Link to="/contact">Contact</Link>
+
 
 
 

@@ -1,17 +1,21 @@
 import { request } from "./requestHelper";
-const BASE_URL = "http://localhost:3000/api/orders";
+import {BASEURL} from "../constants/constants.js";
+
+
+
+const BASE_URL = BASEURL;
 
 
 
 export function getMyOrders() {
-    return request(`${BASE_URL}`);
+    return request(`${BASE_URL}/orders`);
 }
 
 export function getOrderById(id) {
-    return request(`${BASE_URL}/${id}`);
+    return request(`${BASE_URL}/orders/${id}`);
 }
 
 export function cancelOrder(id) {
-    return request(`${BASE_URL}/${id}/cancel`, "PATCH");
+    return request(`${BASE_URL}/orders/${id}/cancel`, "PATCH");
 }
 

@@ -10,11 +10,11 @@ const Footer = () => {
             <div className="fz-footer-bottom">
                 <div className="container">
                     <div className="row gy-4 align-items-center">
-                        <div className="col-lg-6">
-                            <p className="fz-copyright">
+                        <div className="center">
+
                                 &copy;
                                 {currentYear} Developed by eternalmeg for SoftUni React course<b></b>
-                            </p>
+
                         </div>
 
 

@@ -4,30 +4,57 @@ import { Link } from "react-router-dom";
 import { deleteReview, getUserReviews } from "../../../services/reviewService.js";
 import UserContext from "../../../context/UserContext";
 
+import useConfirm from "../../../hooks/useConfirm";
+import { useError } from "../../../context/ErrorContext.jsx";
+
 const MyReviews = () => {
     const [reviews, setReviews] = useState([]);
     const { user } = useContext(UserContext);
 
+    const { confirm, ConfirmUI } = useConfirm();
+    const { throwError } = useError();
+
     useEffect(() => {
         getUserReviews()
             .then(setReviews)
-            .catch(err => toast.error(err.message));
+            .catch(err => {
+
+                if (["server", "forbidden", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+
+                toast.error(err.message || "Failed to load reviews.");
+            });
     }, [user]);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Delete this review?")) return;
+        const ok = await confirm("Are you sure you want to delete this review?");
+        if (!ok) return;
 
         try {
             await deleteReview(id);
-            setReviews(reviews.filter(r => r._id !== id));
-            toast.success("Review deleted");
+            setReviews(prev => prev.filter(r => r._id !== id));
+            toast.success("Review deleted!");
+
         } catch (err) {
-            toast.error(err.message);
+            if (["validation", "auth"].includes(err.type)) {
+                return toast.error(err.message);
+            }
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error.");
         }
     };
 
     return (
         <div className="container">
+
+
+            <ConfirmUI />
+
             <h2>My Reviews</h2>
 
             {reviews.length === 0 && <p>You haven't written any reviews yet.</p>}
@@ -49,7 +76,8 @@ const MyReviews = () => {
                             <div className="review-product-name">
                                 {review.device
                                     ? `${review.device.brand} ${review.device.model}`
-                                    : "Product no longer exists"}
+                                    : <span className="text-muted">(Deleted product)</span>
+                                }
                             </div>
 
 
@@ -62,7 +90,9 @@ const MyReviews = () => {
                                 ))}
                             </div>
 
+
                             <div className="review-comment">{review.comment}</div>
+
 
                             <div className="review-date">
                                 <small>
@@ -71,6 +101,7 @@ const MyReviews = () => {
                                 </small>
                             </div>
 
+                            {/* Actions */}
                             <div className="review-actions">
                                 <Link to={`/user/reviews/${review._id}/edit`}>Edit</Link>
 

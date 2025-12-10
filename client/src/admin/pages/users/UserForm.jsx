@@ -7,10 +7,12 @@ import {
     getUserById,
     updateUser
 } from "../../../services/userService";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function UserForm() {
-    const { id } = useParams();          // ако има id → EDIT, ако няма → CREATE
+    const { id } = useParams();
     const navigate = useNavigate();
+    const { throwError } = useError();
 
     const isEdit = Boolean(id);
 
@@ -20,12 +22,11 @@ export default function UserForm() {
         phone: "",
         email: "",
         role: "user",
-        password: ""   // само при създаване или смяна
+        password: ""
     });
 
     const [loading, setLoading] = useState(true);
 
-    // Load user if editing
     useEffect(() => {
         if (!isEdit) {
             setLoading(false);
@@ -33,22 +34,27 @@ export default function UserForm() {
         }
 
         getUserById(id)
-            .then((data) => {
+            .then(data => {
                 setFormData({
                     firstName: data.firstName,
                     lastName: data.lastName,
                     phone: data.phone || "",
                     email: data.email,
                     role: data.role,
-                    password: "" // празно → няма смяна
+                    password: ""
                 });
             })
-            .catch(() => toast.error("Failed to load user"))
+            .catch(err => {
+                if (["server", "forbidden", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+                toast.error(err.message || "Failed to load user");
+            })
             .finally(() => setLoading(false));
     }, [id]);
 
-    const handleChange = (e) => {
-        setFormData((prev) => ({
+    const handleChange = e => {
+        setFormData(prev => ({
             ...prev,
             [e.target.name]: e.target.value
         }));
@@ -67,8 +73,18 @@ export default function UserForm() {
             }
 
             navigate("/admin/users");
+
         } catch (err) {
-            toast.error(err.message || "Something went wrong");
+
+            if (["validation", "auth"].includes(err.type)) {
+                return toast.error(err.message);
+            }
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error");
         }
     };
 
@@ -77,14 +93,21 @@ export default function UserForm() {
     return (
         <div className="container">
             <div className="fz-checkout">
-                <form className="checkout-form" onSubmit={handleSubmit}>
+                <form
+                    className="checkout-form"
+                    onSubmit={handleSubmit}
+                    autoComplete="off"
+                >
+
+
+
                     <div className="fz-billing-details">
                         <div className="row gy-0 gx-3 gx-md-4">
                             <h3 className="fz-checkout-title">
                                 {isEdit ? "Edit User" : "Create User"}
                             </h3>
 
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <input
                                     type="text"
                                     name="firstName"
@@ -95,7 +118,7 @@ export default function UserForm() {
                                 />
                             </div>
 
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <input
                                     type="text"
                                     name="lastName"
@@ -106,7 +129,7 @@ export default function UserForm() {
                                 />
                             </div>
 
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <input
                                     type="number"
                                     name="phone"
@@ -116,7 +139,7 @@ export default function UserForm() {
                                 />
                             </div>
 
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <input
                                     type="email"
                                     name="email"
@@ -124,11 +147,11 @@ export default function UserForm() {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
-                                    disabled={isEdit} // имейлът не се сменя
+                                    disabled={isEdit}
                                 />
                             </div>
 
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <Form.Select
                                     name="role"
                                     value={formData.role}
@@ -139,21 +162,18 @@ export default function UserForm() {
                                 </Form.Select>
                             </div>
 
-                            {/* Password – only required on CREATE */}
-                            <div className="col-6 col-xxs-12">
+                            <div className="col-6">
                                 <input
                                     type="password"
                                     name="password"
-                                    placeholder={
-                                        isEdit
-                                            ? "New Password (optional)"
-                                            : "Password"
-                                    }
+                                    placeholder={isEdit ? "New Password (optional)" : "Password"}
                                     value={formData.password}
                                     onChange={handleChange}
+                                    autoComplete="new-password"
                                     required={!isEdit}
                                 />
                             </div>
+
                         </div>
                     </div>
 

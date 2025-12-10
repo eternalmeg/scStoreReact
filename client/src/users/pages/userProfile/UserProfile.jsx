@@ -2,9 +2,11 @@ import { useState, useContext, useEffect } from "react";
 import UserContext from "../../../context/UserContext";
 import { getProfile, updateProfile } from "../../../services/authService.js";
 import { toast } from "react-toastify";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function Profile() {
     const { user, login } = useContext(UserContext);
+    const { throwError } = useError();
 
     const [editing, setEditing] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -33,14 +35,22 @@ export default function Profile() {
 
                 setFormData(formatted);
                 setOriginalData(formatted);
+
             } catch (err) {
-                toast.error("Failed to load profile info");
+
+                if (["server", "forbidden", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+
+                toast.error(err.message || "Failed to load profile.");
             } finally {
                 setLoading(false);
             }
         }
+
         load();
     }, []);
+
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -49,18 +59,31 @@ export default function Profile() {
         }));
     };
 
+
     const handleSave = async () => {
         try {
-            const updatedUser = await updateProfile(formData);
+            const updated = await updateProfile(formData);
 
             // backend връща { user, token }
-            login(updatedUser); // Обновява контекста и localStorage
+            login(updated);
 
             toast.success("Profile updated!");
-            setEditing(false);
             setOriginalData(formData);
+            setEditing(false);
+
         } catch (err) {
-            toast.error("Error updating profile");
+
+
+            if (["validation", "auth"].includes(err.type)) {
+                return toast.error(err.message);
+            }
+
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error updating profile.");
         }
     };
 
@@ -71,13 +94,14 @@ export default function Profile() {
 
     if (loading) return <p>Loading...</p>;
 
+
     return (
         <div className="container">
             <div className="fz-checkout">
                 <form className="checkout-form">
                     <div className="fz-billing-details">
                         <div className="row">
-                            <h3>User info</h3>
+                            <h3>User Info</h3>
 
                             <div className="col-6">
                                 <input
@@ -121,6 +145,7 @@ export default function Profile() {
                                     placeholder="Email Address"
                                 />
                             </div>
+
                         </div>
                     </div>
 

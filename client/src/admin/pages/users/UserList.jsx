@@ -7,7 +7,7 @@ import useFetch from "../../../hooks/useFetch";
 
 export default function UserList() {
 
-    // ✔ Зареждаме всички потребители чрез useFetch
+
     const { data: users, setData: setUsers, loading, error } =
         useFetch(() => getAllUsers(), []);
 
@@ -18,7 +18,7 @@ export default function UserList() {
             await deleteUser(id);
             toast.success("User deleted");
 
-            // премахваме от локалния state чрез setData
+
             setUsers(prev => prev.filter(u => u._id !== id));
 
         } catch (err) {

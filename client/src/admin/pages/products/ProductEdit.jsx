@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 import { getOne, editProduct } from "../../../services/productService";
 import { uploadToCloudinary } from "../../../services/cloudinaryService";
 import { Form } from "react-bootstrap";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function ProductEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { throwError } = useError();
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -18,10 +20,11 @@ export default function ProductEdit() {
         quantity: 0,
         shortDescription: "",
         description: "",
-        images: [] // тук държим старите URL-и или файлове
+        images: []
     });
 
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
 
     useEffect(() => {
@@ -36,10 +39,15 @@ export default function ProductEdit() {
                     quantity: data.quantity,
                     shortDescription: data.shortDescription,
                     description: data.description,
-                    images: data.images || [] // старите URL-и
+                    images: data.images || []
                 });
             })
-            .catch(err => toast.error(err.message))
+            .catch(err => {
+                if (["server", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+                toast.error(err.message);
+            })
             .finally(() => setLoading(false));
     }, [id]);
 
@@ -55,33 +63,35 @@ export default function ProductEdit() {
 
         setFormData(prev => ({
             ...prev,
-            images: [...prev.images, ...files] // добавяме новите файлове към старите URL-и
+            images: [...prev.images, ...files]
+        }));
+    };
+
+
+    const removeImage = index => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
         }));
     };
 
 
     const handleSubmit = async e => {
         e.preventDefault();
+        setSaving(true);
 
         try {
-            let finalImages = [];
-
-            for (let img of formData.images) {
-                if (typeof img === "string") {
-                    // старо изображение от базата → запазваме го
-                    finalImages.push(img);
-                } else {
-                    // нов файл → качваме го в Cloudinary
-                    const uploadedUrl = await uploadToCloudinary(img);
-                    finalImages.push(uploadedUrl);
-                }
-            }
+            const uploads = await Promise.all(
+                formData.images.map(img =>
+                    typeof img === "string" ? img : uploadToCloudinary(img)
+                )
+            );
 
             const cleanedData = {
                 ...formData,
                 price: Number(formData.price),
                 quantity: Number(formData.quantity),
-                images: finalImages
+                images: uploads
             };
 
             await editProduct(id, cleanedData);
@@ -90,7 +100,22 @@ export default function ProductEdit() {
             navigate("/admin/products");
 
         } catch (err) {
-            toast.error(err.message);
+            console.error(err);
+
+
+            if (["validation", "auth"].includes(err.type)) {
+                toast.error(err.message);
+            }
+
+            else if (["server", "notfound", "forbidden"].includes(err.type)) {
+                throwError(err.message);
+            }
+            else {
+                toast.error("Unexpected error while updating product.");
+            }
+
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -109,7 +134,6 @@ export default function ProductEdit() {
                         <form onSubmit={handleSubmit}>
                             <div className="row g-xl-4 g-3">
 
-                                {/* Brand */}
                                 <div className="col-6">
                                     <input
                                         type="text"
@@ -120,7 +144,6 @@ export default function ProductEdit() {
                                         required
                                     />
                                 </div>
-
 
                                 <div className="col-6">
                                     <input
@@ -133,7 +156,6 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-
                                 <div className="col-6">
                                     <input
                                         type="text"
@@ -145,7 +167,6 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-
                                 <div className="col-6">
                                     <input
                                         type="number"
@@ -156,7 +177,6 @@ export default function ProductEdit() {
                                         required
                                     />
                                 </div>
-
 
                                 <div className="col-6">
                                     <Form.Select
@@ -172,7 +192,6 @@ export default function ProductEdit() {
                                     </Form.Select>
                                 </div>
 
-
                                 <div className="col-6">
                                     <input
                                         type="number"
@@ -184,7 +203,6 @@ export default function ProductEdit() {
                                     />
                                 </div>
 
-
                                 <div className="col-12">
                                     <textarea
                                         name="shortDescription"
@@ -195,7 +213,6 @@ export default function ProductEdit() {
                                     ></textarea>
                                 </div>
 
-
                                 <div className="col-12">
                                     <textarea
                                         name="description"
@@ -205,7 +222,6 @@ export default function ProductEdit() {
                                         required
                                     ></textarea>
                                 </div>
-
 
                                 <div className="col-12">
                                     <label>Replace / add images</label>
@@ -221,20 +237,43 @@ export default function ProductEdit() {
                                 <div className="col-12">
                                     <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                                         {formData.images.map((img, i) => (
-                                            <img
-                                                key={i}
-                                                src={typeof img === "string" ? img : URL.createObjectURL(img)}
-                                                width="100"
-                                                style={{ borderRadius: "8px" }}
-                                            />
+                                            <div key={i} style={{ position: "relative" }}>
+                                                <img
+                                                    src={typeof img === "string" ? img : URL.createObjectURL(img)}
+                                                    width="100"
+                                                    style={{ borderRadius: "8px" }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(i)}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "-6px",
+                                                        right: "-6px",
+                                                        background: "red",
+                                                        border: "none",
+                                                        color: "white",
+                                                        borderRadius: "50%",
+                                                        width: "24px",
+                                                        height: "24px",
+                                                        cursor: "pointer"
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>
 
                             </div>
 
-                            <button type="submit" className="fz-1-banner-btn fz-comment-form__btn">
-                                Save Changes
+                            <button
+                                type="submit"
+                                className="fz-1-banner-btn fz-comment-form__btn"
+                                disabled={saving}
+                            >
+                                {saving ? "Saving..." : "Save Changes"}
                             </button>
                         </form>
 

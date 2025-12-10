@@ -1,4 +1,4 @@
-// src/components/cart/Cart.jsx
+
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UserContext from "../../context/UserContext";
@@ -14,7 +14,7 @@ export default function Cart() {
     const { user, updateCart } = useContext(UserContext);
     const cart = user?.cart || [];
 
-    // 1) Зареждаме количката от BE при отваряне на страницата
+
     useEffect(() => {
         if (!user) return;
 
@@ -23,7 +23,7 @@ export default function Cart() {
             .catch((err) => toast.error(err.message));
     }, [user?._id]);
 
-    // 2) Промяна на количество (и към BE)
+
     const changeQuantity = async (deviceId, delta) => {
         const item = cart.find((i) => i.device === deviceId);
         if (!item) return;
@@ -38,17 +38,18 @@ export default function Cart() {
         }
     };
 
-    // 3) Премахване на продукт
+
     const handleRemove = async (deviceId) => {
         try {
             const serverCart = await removeFromCart(deviceId);
             updateCart(serverCart);
+            toast.success("Successfully removed product ");
         } catch (err) {
             toast.error(err.message);
         }
     };
 
-    // 4) Checkout
+
     const handleCheckout = async () => {
         try {
             await apiCheckout();
@@ -59,7 +60,7 @@ export default function Cart() {
         }
     };
 
-    // 5) Сметки
+
     const subtotal = cart.reduce(
         (sum, item) => sum + (item.price || 0) * item.quantity,
         0
@@ -67,7 +68,7 @@ export default function Cart() {
 
     return (
         <div>
-            {/* Breadcrumb */}
+
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
                     <div className="row justify-content-between align-items-center">
@@ -86,7 +87,7 @@ export default function Cart() {
                 </div>
             </div>
 
-            {/* Cart content */}
+
             <div className="container">
                 <div className="cart-section">
                     <div className="cart-left inner-cart">
@@ -181,7 +182,7 @@ export default function Cart() {
                         </div>
                     </div>
 
-                    {/* Billing summary */}
+
                     <div className="cart-checkout-area">
                         <h4 className="cart-checkout-area__title">Billing Summary</h4>
 

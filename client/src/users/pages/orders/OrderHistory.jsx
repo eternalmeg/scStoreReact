@@ -22,21 +22,40 @@ const OrderHistory = () => {
 
             <div className="orders-list">
                 {orders.map(order => {
-                    const firstItem = order.items[0].device;
+                    const item = order.items?.[0];
+                    const device = item?.device;
+
+                    const isDeleted = !device;
 
                     return (
                         <div key={order._id} className="order-card">
+
+
                             <div className="order-card__img">
-                                <img
-                                    src={firstItem.images?.[0] ?? ""}
-                                    alt={firstItem.model}
-                                />
+                                {!isDeleted ? (
+                                    <img
+                                        src={device.images?.[0]}
+                                        alt={device.model}
+                                    />
+                                ) : (
+                                    <div className="deleted-product-thumb">
+                                        (Deleted product)
+                                    </div>
+                                )}
                             </div>
 
                             <div className="order-card-info">
                                 <h4 className="order-id">
                                     Order #{order._id.slice(-5)}
                                 </h4>
+
+
+                                <p className="order-product-name">
+                                    {!isDeleted
+                                        ? `${device.brand} ${device.model}`
+                                        : <strong>(Deleted product)</strong>}
+                                </p>
+
 
                                 <p className={`order-status ${order.status}`}>
                                     {order.status}
@@ -50,12 +69,15 @@ const OrderHistory = () => {
                                     Total: <strong>${order.totalPrice}</strong>
                                 </p>
 
-                                <button
-                                    className="order-btn"
-                                    onClick={() => navigate(`/user/orders/${order._id}`)}
-                                >
-                                    View Details
-                                </button>
+
+                                {!isDeleted && (
+                                    <button
+                                        className="order-btn"
+                                        onClick={() => navigate(`/user/orders/${order._id}`)}
+                                    >
+                                        View Details
+                                    </button>
+                                )}
                             </div>
                         </div>
                     );

@@ -1,17 +1,28 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Nav, Tab } from "react-bootstrap";
+
 import ProductDetailsSlider from "../../layout/productDetailsSlider/ProductDetailsSlider.jsx";
-import { getOne, deleteProduct } from "../../services/productService";
-import UserContext from "../../context/UserContext";
-import { toast } from "react-toastify";
 import ProductReview from "../../layout/review/ProductReview.jsx";
-import { getReviews } from "../../services/reviewService";
+
+import { getOne, deleteProduct } from "../../services/productService";
 import { addToCart } from "../../services/cartService";
 
+import UserContext from "../../context/UserContext";
+
+import useConfirm from "../../hooks/useConfirm.jsx";
+import { useError } from "../../context/ErrorContext.jsx";
+
+import { toast } from "react-toastify";
 
 
 const ProductDetails = () => {
+    const {throwError} = useError();
+
+    // Hooks (must stay inside component)
+    const { confirm, ConfirmUI } = useConfirm();
+
+
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, isAdmin, updateCart } = useContext(UserContext);
@@ -19,9 +30,7 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [activeTab, setActiveTab] = useState("description");
     const [reviews, setReviews] = useState([]);
-
     const [quantity, setQuantity] = useState(1);
-
 
 
 
@@ -30,58 +39,61 @@ const ProductDetails = () => {
             .then(data => {
                 setProduct(data);
 
-                const reviewObj = data.reviewList;
-
-
+                const reviewObj = data.reviewList || {};
                 const cleanReviews = Object.values(reviewObj).filter(
                     item => typeof item === "object" && item.comment
                 );
 
-
-
                 setReviews(cleanReviews);
             })
-            .catch(err => toast.error(err.message));
+            .catch(() => {
+                throwError("Failed to load product data.");
+            });
+
     }, [id]);
 
 
+    // Add to cart
     const handleAddToCart = async () => {
         if (!user) {
             toast.error("You must be logged in to add items to cart");
+            navigate("/login");
             return;
         }
 
         try {
             const updatedCart = await addToCart(product._id, quantity);
-
             updateCart(updatedCart);
-
             toast.success("Added to cart!");
         } catch (err) {
-            toast.error(err.message);
+            throwError("Failed to add product to cart.");
         }
     };
-
-
 
 
 
     const handleDelete = async () => {
-        if (!window.confirm("Are you sure you want to delete this product?")) return;
+        console.log("DELETE CLICKED");
+        const ok = await confirm("Are you sure you want to delete this product?");
+        if (!ok) {
+            console.log("USER CANCELED");
+            return;}
 
         try {
             await deleteProduct(id);
-            toast.success("Product deleted");
             navigate("/catalog");
         } catch (err) {
-            toast.error(err.message);
+            throwError("Failed to delete product.");
         }
     };
 
+
     if (!product) return <p>Loading...</p>;
+
 
     return (
         <div>
+
 
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
@@ -100,14 +112,17 @@ const ProductDetails = () => {
             </div>
 
 
+
             <section className="fz-product-details">
                 <div className="container">
                     <div className="row align-items-start justify-content-center">
 
 
+
                         <div className="col-lg-5 col-md-6 col-12 col-xxs-12">
                             <ProductDetailsSlider images={product.images} />
                         </div>
+
 
 
                         <div className="col-lg-7 col-md-6">
@@ -117,12 +132,11 @@ const ProductDetails = () => {
                                     {product.brand} {product.model}
                                 </h2>
 
-
                                 <div className="fz-product-details__price-rating">
                                     <span className="price">${product.price}</span>
 
                                     <div className="rating">
-                                        {Array.from({length: 5}).map((_, i) => (
+                                        {Array.from({ length: 5 }).map((_, i) => (
                                             <i
                                                 key={i}
                                                 className={`fa-${i < Math.round(product.averageRating) ? "solid" : "light"} fa-star`}
@@ -131,7 +145,6 @@ const ProductDetails = () => {
                                     </div>
 
                                 </div>
-
 
                                 <div className="fz-product-details__infos">
                                     <ul>
@@ -145,10 +158,10 @@ const ProductDetails = () => {
                                     </ul>
                                 </div>
 
-
                                 <p className="fz-product-details__short-descr">
                                     {product.shortDescription}
                                 </p>
+
 
 
                                 <div className="fz-product-details__actions">
@@ -184,7 +197,6 @@ const ProductDetails = () => {
 
                                     </div>
 
-
                                     <button
                                         className="fz-product-details__add-to-cart"
                                         onClick={handleAddToCart}
@@ -192,11 +204,11 @@ const ProductDetails = () => {
                                         Add to cart
                                     </button>
 
-
                                     <button className="fz-product-details__add-to-wishlist">
                                         <i className="fa-light fa-heart"></i>
                                     </button>
                                 </div>
+
 
 
                                 {isAdmin && (
@@ -221,6 +233,7 @@ const ProductDetails = () => {
                         </div>
 
 
+
                         <div className="col-12">
                             <div className="fz-product-details__additional-info">
 
@@ -236,10 +249,9 @@ const ProductDetails = () => {
 
                                 <Tab.Content>
 
-
                                     <Tab.Pane
                                         eventKey="description"
-                                        className={`tab-pane ${activeTab === 'description' ? 'show active' : ''}`}
+                                        className={`tab-pane ${activeTab === "description" ? "show active" : ""}`}
                                     >
                                         <div className="fz-product-details__descr">
                                             <p style={{ whiteSpace: "pre-line" }}>
@@ -248,16 +260,12 @@ const ProductDetails = () => {
                                         </div>
                                     </Tab.Pane>
 
-
                                     <Tab.Pane
                                         eventKey="review"
-                                        className={`tab-pane ${activeTab === 'review' ? 'show active' : ''}`}
+                                        className={`tab-pane ${activeTab === "review" ? "show active" : ""}`}
                                     >
 
                                         <ProductReview reviews={reviews} />
-
-
-
 
                                         <div className="fz-product-details__actions mt-3">
                                             <button
@@ -278,6 +286,10 @@ const ProductDetails = () => {
                     </div>
                 </div>
             </section>
+
+
+            <ConfirmUI />
+
 
         </div>
     );

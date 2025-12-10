@@ -1,34 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { getAllReviews, deleteReview } from "../../../services/adminReviewService";
+import React from "react";
 import { toast } from "react-toastify";
+import useFetch from "../../../hooks/useFetch";
+import { getAllReviews, deleteReview } from "../../../services/adminReviewService";
+import useConfirm from "../../../hooks/useConfirm";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function ReviewList() {
-    const [reviews, setReviews] = useState([]);
 
-    const loadReviews = () => {
-        getAllReviews()
-            .then(setReviews)
-            .catch(err => toast.error(err.message));
-    };
+    const { confirm, ConfirmUI } = useConfirm();
+    const { throwError } = useError();
 
-    useEffect(() => {
-        loadReviews();
-    }, []);
+    const {
+        data: reviews,
+        loading,
+        error,
+        setData: setReviews
+    } = useFetch(() => getAllReviews(), []);
 
     const handleDelete = async (id) => {
-        if (!confirm("Delete this review?")) return;
+        const ok = await confirm("Are you sure you want to delete this review?");
+        if (!ok) return;
 
         try {
             await deleteReview(id);
-            toast.success("Review deleted");
-            loadReviews();
+
+            setReviews(prev => prev.filter(r => r._id !== id));
+
+            toast.success("Review deleted successfully");
+
         } catch (err) {
-            toast.error(err.message);
+
+            if (err.type === "validation" || err.type === "auth") {
+                return toast.error(err.message);
+            }
+
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error while deleting review.");
         }
     };
 
+    if (loading) return <h3>Loading reviews...</h3>;
+    if (error) return <p>Error loading reviews.</p>;
+
     return (
         <div className="container mt-4">
+
+
+            <ConfirmUI />
+
             <h2>Reviews</h2>
 
             <table className="table table-striped mt-4">
@@ -45,7 +68,7 @@ export default function ReviewList() {
                 </thead>
 
                 <tbody>
-                {reviews.map((r, i) => (
+                {reviews?.map((r, i) => (
                     <tr key={r._id}>
                         <td>{i + 1}</td>
 
@@ -56,7 +79,9 @@ export default function ReviewList() {
                         </td>
 
                         <td>
-                            {r.device?.brand} {r.device?.model}
+                            {r.device
+                                ? `${r.device.brand} ${r.device.model}`
+                                : <span className="text-muted">(Deleted product)</span>}
                         </td>
 
                         <td>{r.rating ?? "-"}</td>
@@ -79,6 +104,10 @@ export default function ReviewList() {
                 ))}
                 </tbody>
             </table>
+
+            {reviews?.length === 0 && (
+                <p className="mt-3">No reviews found.</p>
+            )}
         </div>
     );
 }

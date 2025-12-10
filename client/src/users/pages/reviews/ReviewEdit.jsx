@@ -3,28 +3,40 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { getUserReviews, updateReview } from "../../../services/reviewService";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function ReviewEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { throwError } = useError();
 
     const [review, setReview] = useState(null);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getUserReviews().then(list => {
-            const found = list.find(r => r._id === id);
-            if (!found) {
-                toast.error("Review not found!");
-                navigate("/user/reviews");
-                return;
-            }
+        getUserReviews()
+            .then(list => {
+                const found = list.find(r => r._id === id);
 
-            setReview(found);
-            setRating(found.rating);
-            setComment(found.comment);
-        });
+                if (!found) {
+                    toast.error("Review not found.");
+                    return navigate("/user/reviews");
+                }
+
+                setReview(found);
+                setRating(found.rating);
+                setComment(found.comment);
+            })
+            .catch(err => {
+                // глобални грешки
+                if (["server", "forbidden", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+                toast.error(err.message || "Failed to load review.");
+            })
+            .finally(() => setLoading(false));
     }, [id]);
 
     const handleSubmit = async (e) => {
@@ -32,14 +44,26 @@ export default function ReviewEdit() {
 
         try {
             await updateReview(id, { rating, comment });
+
             toast.success("Review updated successfully!");
             navigate("/user/reviews");
+
         } catch (err) {
-            toast.error(err.message);
+
+            if (["validation", "auth"].includes(err.type)) {
+                return toast.error(err.message);
+            }
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error.");
         }
     };
 
-    if (!review) return <p>Loading...</p>;
+    if (loading) return <p>Loading...</p>;
+    if (!review) return null;
 
     return (
         <div className="container" style={{ maxWidth: "900px", marginTop: "40px" }}>
@@ -47,7 +71,7 @@ export default function ReviewEdit() {
 
             <form onSubmit={handleSubmit}>
 
-                {/* RATING DROPDOWN */}
+
                 <div className="mb-3">
                     <select
                         className="form-select"
@@ -62,7 +86,7 @@ export default function ReviewEdit() {
                     </select>
                 </div>
 
-                {/* COMMENT */}
+
                 <div className="mb-3">
                     <textarea
                         className="form-control"
@@ -74,7 +98,7 @@ export default function ReviewEdit() {
                     ></textarea>
                 </div>
 
-                {/* BUTTONS */}
+
                 <button type="submit" className="fz-1-banner-btn" style={{ marginRight: "10px" }}>
                     Save Changes
                 </button>

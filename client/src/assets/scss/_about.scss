@@ -1,0 +1,81 @@
+.fz-about-store {
+  &-area {
+    padding: 100px 0;
+
+    @include lg {
+      padding: 60px 0;
+    }
+  }
+
+  &-img {
+    img {
+      border-radius: 8px;
+    }
+  }
+
+  &-title {
+    font-family: $poppins;
+    font-size: 34px;
+    font-weight: 600;
+    margin-bottom: 23px;
+    color: $black;
+
+    @include xl {
+      font-size: 30px;
+    }
+
+    @include lg {
+      margin-bottom: 15px;
+      font-size: 28px;
+    }
+
+    @include sm {
+      margin-bottom: 10px;
+      font-size: 25px;
+    }
+
+    @include xxs {
+      font-size: 22px;
+    }
+  }
+
+  &-content {
+    color: #777;
+
+    p {
+      margin-bottom: 20px;
+
+      @include lg {
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  &-btn {
+    height: 50px;
+    line-height: 48px;
+    border-radius: 5px;
+    background-color: $black;
+    color: $white;
+    border: 1px solid $black;
+    margin-top: 33px;
+    padding: 0 30px;
+
+    @include lg {
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+      padding: 0 25px;
+      margin-top: 25px;
+    }
+
+    &:hover {
+      color: $black;
+    }
+
+    &::before {
+      border-radius: 5px;
+      background-color: $white;
+    }
+  }
+}

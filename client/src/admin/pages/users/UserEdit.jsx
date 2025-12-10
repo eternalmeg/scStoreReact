@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getUserById, updateUser } from "../../../services/userService";
 import { Form } from "react-bootstrap";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 export default function UserEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { throwError } = useError();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -14,11 +16,12 @@ export default function UserEdit() {
         email: "",
         phone: "",
         role: "user",
-        password: ""   // новата парола (по избор)
+        password: ""
     });
 
     const [loading, setLoading] = useState(true);
 
+    // Load user data
     useEffect(() => {
         getUserById(id)
             .then(data => {
@@ -27,13 +30,19 @@ export default function UserEdit() {
                     lastName: data.lastName,
                     email: data.email,
                     phone: data.phone || "",
-                    role: data.role,
-                    password: ""     // празно → не сменя паролата
+                    role: data.role || "user",
+                    password: "" // do not pre-fill
                 });
             })
-            .catch(err => toast.error(err.message))
+            .catch(err => {
+                // serious errors → modal
+                if (["server", "forbidden", "notfound"].includes(err.type)) {
+                    return throwError(err.message);
+                }
+                toast.error(err.message);
+            })
             .finally(() => setLoading(false));
-    }, [id]);
+    }, [id, throwError]);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -44,16 +53,24 @@ export default function UserEdit() {
         e.preventDefault();
 
         const payload = { ...formData };
-        if (!payload.password) {
-            delete payload.password; // ако е празно → НЕ обновяваме парола
-        }
+        if (!payload.password) delete payload.password;
 
         try {
             await updateUser(id, payload);
             toast.success("User updated successfully!");
             navigate("/admin/users");
         } catch (err) {
-            toast.error(err.message);
+            // Validation & auth → toast
+            if (err.type === "validation" || err.type === "auth") {
+                return toast.error(err.message);
+            }
+
+            // Fatal → global modal
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error while updating user.");
         }
     };
 
@@ -122,7 +139,7 @@ export default function UserEdit() {
                                 </Form.Select>
                             </div>
 
-                            {/* NEW PASSWORD (optional) */}
+
                             <div className="col-6">
                                 <input
                                     type="password"

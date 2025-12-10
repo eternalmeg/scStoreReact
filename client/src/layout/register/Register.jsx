@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { register } from "../../services/authService";
 import { useUser } from "../../context/useUser";
+import { useError } from "../../context/ErrorContext.jsx";
 
 const Register = () => {
-
     const navigate = useNavigate();
-
     const { login: saveUser } = useUser();
+    const { throwError } = useError();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -20,29 +20,47 @@ const Register = () => {
     });
 
     const handleChange = (e) => {
-        setFormData(state => ({
-            ...state,
+        setFormData(s => ({
+            ...s,
             [e.target.name]: e.target.value
         }));
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // 🔥 ЗАДЪЛЖИТЕЛНО – иначе заявка няма да тръгне
+        e.preventDefault();
+
 
         if (formData.password !== formData.rePassword) {
-            alert("Passwords do not match");
-            return;
+            return toast.error("Passwords do not match");
         }
 
         try {
             const result = await register(formData);
 
-            saveUser(result); // пазим user-а в контекст
+            saveUser(result);
             toast.success("Registered successfully!");
-
             navigate("/");
+
         } catch (err) {
-            toast.error(err.message);
+            console.error("REGISTER ERROR =", err);
+
+
+            if (err.type === "validation" || err.type === "auth") {
+                return toast.error(err.message);
+            }
+
+
+            if (err.type === "network") {
+                return toast.info("Server is waking up, please try again...");
+            }
+
+
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            // fallback
+            toast.error("Unexpected error occurred");
         }
     };
 
@@ -54,29 +72,57 @@ const Register = () => {
                         <h3 className="single-form-title">Sign up</h3>
 
                         <form onSubmit={handleSubmit}>
-                            <input type="text" name="firstName" placeholder="First name"
-                                   value={formData.firstName} onChange={handleChange} />
+                            <input
+                                type="text"
+                                name="firstName"
+                                placeholder="First name"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
 
-                            <input type="text" name="lastName" placeholder="Last name"
-                                   value={formData.lastName} onChange={handleChange} />
+                            <input
+                                type="text"
+                                name="lastName"
+                                placeholder="Last name"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
 
-                            <input type="email" name="email" placeholder="Email Address"
-                                   value={formData.email} onChange={handleChange} />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email Address"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
 
-                            <input type="text" name="phone" placeholder="Phone number"
-                                   value={formData.phone} onChange={handleChange} />
+                            <input
+                                type="text"
+                                name="phone"
+                                placeholder="Phone number"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
 
-                            <input type="password" name="password" placeholder="Password"
-                                   value={formData.password} onChange={handleChange} />
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
 
-                            <input type="password" name="rePassword" placeholder="Repeat password"
-                                   value={formData.rePassword} onChange={handleChange} />
+                            <input
+                                type="password"
+                                name="rePassword"
+                                placeholder="Repeat password"
+                                value={formData.rePassword}
+                                onChange={handleChange}
+                            />
 
-                            <div className="sign-in-checkbox-container d-flex justify-content-between">
-                                <Link to="/login" className="password-recovery-btn">
-                                    Already have an account? Sign in here.
-                                </Link>
-                            </div>
+                            <Link to="/login" className="password-recovery-btn">
+                                Already have an account? Sign in here.
+                            </Link>
 
                             <button type="submit" className="fz-1-banner-btn single-form-btn">
                                 Register

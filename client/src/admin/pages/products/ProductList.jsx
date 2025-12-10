@@ -3,7 +3,15 @@ import { Link } from "react-router-dom";
 import * as productService from "../../../services/productService";
 import useFetch from "../../../hooks/useFetch";
 
+import { toast } from "react-toastify";
+import useConfirm from "../../../hooks/useConfirm";
+import { useError } from "../../../context/ErrorContext.jsx";
+
 export default function ProductList() {
+
+    const { confirm, ConfirmUI } = useConfirm();   // ✔ вътре в компонента
+    const { throwError } = useError();
+
     const {
         data: products,
         setData: setProducts,
@@ -12,13 +20,19 @@ export default function ProductList() {
     } = useFetch(() => productService.getAll(), []);
 
     const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this product?")) return;
+        const ok = await confirm("Are you sure you want to delete this product?");
+        if (!ok) return;
 
         try {
             await productService.deleteProduct(id);
             setProducts(prev => prev.filter(p => p._id !== id));
+            toast.success("Product deleted successfully!");
+
         } catch (err) {
-            alert(err.message);
+            if (["server", "forbidden", "notfound"].includes(err.type)) {
+                return throwError(err.message);
+            }
+            toast.error(err.message || "Error deleting product");
         }
     };
 
@@ -27,6 +41,7 @@ export default function ProductList() {
 
     return (
         <div className="admin-product-list container">
+
             <div className="d-flex justify-content-between align-items-center my-3">
                 <h2>Products</h2>
                 <Link to="/admin/products/create" className="btn btn-primary">
@@ -56,6 +71,7 @@ export default function ProductList() {
                         <td>{p.sku}</td>
                         <td>{p.price} $</td>
                         <td>{p.quantity}</td>
+
                         <td>
                             <Link
                                 to={`/admin/products/${p._id}`}
@@ -76,7 +92,8 @@ export default function ProductList() {
                 </tbody>
             </table>
 
-            {products?.length === 0 && <p>No products found.</p>}
+
+            <ConfirmUI />
         </div>
     );
 }

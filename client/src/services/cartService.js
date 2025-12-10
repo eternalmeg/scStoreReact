@@ -1,18 +1,20 @@
 import { request } from "./requestHelper";
+import {BASEURL} from "../constants/constants.js";
 
-const BASE = "http://localhost:3000/api/cart";
+
+const BASE_URL = BASEURL;
 
 export const addToCart = (productId,  quantity = 1) =>
-    request(`${BASE}/add`, "POST", { productId, quantity });
+    request(`${BASE_URL}/cart/add`, "POST", { productId, quantity });
 
 export const updateQuantity = (productId, quantity) =>
-    request(`${BASE}/update`, "PUT", { productId, quantity });
+    request(`${BASE_URL}/cart/update`, "PUT", { productId, quantity });
 
 export const removeFromCart = (productId) =>
-    request(`${BASE}/remove/${productId}`, "DELETE");
+    request(`${BASE_URL}/cart/remove/${productId}`, "DELETE");
 
 export const checkout = () =>
-    request(`${BASE}/checkout`, "POST");
+    request(`${BASE_URL}/cart/checkout`, "POST");
 
 export const getCart = () =>
-    request(`${BASE}`, "GET");
+    request(`${BASE_URL}/cart`, "GET");

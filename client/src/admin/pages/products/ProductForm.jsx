@@ -5,9 +5,11 @@ import { toast } from "react-toastify";
 
 import { uploadToCloudinary } from "../../../services/cloudinaryService";
 import { createProduct } from "../../../services/productService";
+import { useError } from "../../../context/ErrorContext.jsx";
 
 const ProductForm = () => {
     const navigate = useNavigate();
+    const { throwError } = useError();
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -18,8 +20,10 @@ const ProductForm = () => {
         quantity: "",
         shortDescription: "",
         description: "",
-        images: [] // FILE OBJECTS!!!
+        images: [] // File objects
     });
+
+    const [saving, setSaving] = useState(false);
 
     const handleChange = (e) => {
         setFormData(prev => ({
@@ -28,24 +32,41 @@ const ProductForm = () => {
         }));
     };
 
-
     const handleImages = (e) => {
+        const files = Array.from(e.target.files);
+
+        if (files.length + formData.images.length > 5) {
+            return toast.error("You can upload a maximum of 5 images.");
+        }
+
         setFormData(prev => ({
             ...prev,
-            images: [...e.target.files]
+            images: [...prev.images, ...files]
+        }));
+    };
+
+    const removeImage = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            // Upload all images to Cloudinary
-            const uploadedUrls = [];
+        setSaving(true);
 
-            for (const img of formData.images) {
-                const url = await uploadToCloudinary(img);
-                uploadedUrls.push(url);
+        try {
+            if (formData.images.length === 0) {
+                toast.error("Please upload at least one image.");
+                setSaving(false);
+                return;
             }
+
+            // Upload all images in parallel
+            const uploadedUrls = await Promise.all(
+                formData.images.map(file => uploadToCloudinary(file))
+            );
 
             const newProduct = {
                 brand: formData.brand,
@@ -56,22 +77,33 @@ const ProductForm = () => {
                 quantity: Number(formData.quantity),
                 shortDescription: formData.shortDescription,
                 description: formData.description,
-                images: uploadedUrls,
+                images: uploadedUrls
             };
 
             await createProduct(newProduct);
-
             toast.success("Product created successfully!");
             navigate("/admin/products");
 
         } catch (err) {
-            toast.error(err.message);
-            console.log(err);
+            console.error(err);
+
+            if (["validation", "auth"].includes(err.type)) {
+                return toast.error(err.message);
+            }
+
+            if (["server", "notfound", "forbidden"].includes(err.type)) {
+                return throwError(err.message);
+            }
+
+            toast.error("Unexpected error occurred.");
+        } finally {
+            setSaving(false);
         }
     };
 
     return (
         <div>
+            {/* Breadcrumb */}
             <div className="fz-inner-page-breadcrumb">
                 <div className="container">
                     <div className="row justify-content-between align-items-center">
@@ -80,7 +112,7 @@ const ProductForm = () => {
                                 <h1>Admin</h1>
                                 <ul className="fz-inner-page-breadcrumb-nav">
                                     <li><Link to="/">Home</Link></li>
-                                    <li className="current-page">Create</li>
+                                    <li className="current-page">Create Product</li>
                                 </ul>
                             </div>
                         </div>
@@ -92,6 +124,7 @@ const ProductForm = () => {
                 <div className="fz-inner-contact-details">
                     <div className="fz-inner-contact-details__left">
                         <div className="fz-blog-details__comment-form">
+
                             <h4 className="fz-comment-form__title fz-inner-contact-details__title">
                                 Create Product
                             </h4>
@@ -199,18 +232,37 @@ const ProductForm = () => {
                                         />
                                     </div>
 
-
+                                    {/* Previews */}
                                     {formData.images.length > 0 && (
                                         <div className="col-12">
                                             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                                                {Array.from(formData.images).map((img, i) => (
-                                                    <img
-                                                        key={i}
-                                                        src={URL.createObjectURL(img)}
-                                                        alt="preview"
-                                                        width="100"
-                                                        style={{ borderRadius: "8px" }}
-                                                    />
+                                                {formData.images.map((img, i) => (
+                                                    <div key={i} style={{ position: "relative" }}>
+                                                        <img
+                                                            src={URL.createObjectURL(img)}
+                                                            alt="preview"
+                                                            width="100"
+                                                            style={{ borderRadius: "8px" }}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeImage(i)}
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "-6px",
+                                                                right: "-6px",
+                                                                background: "red",
+                                                                border: "none",
+                                                                color: "white",
+                                                                borderRadius: "50%",
+                                                                width: "24px",
+                                                                height: "24px",
+                                                                cursor: "pointer"
+                                                            }}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
@@ -218,8 +270,12 @@ const ProductForm = () => {
 
                                 </div>
 
-                                <button type="submit" className="fz-1-banner-btn fz-comment-form__btn">
-                                    Create Product
+                                <button
+                                    type="submit"
+                                    className="fz-1-banner-btn fz-comment-form__btn"
+                                    disabled={saving}
+                                >
+                                    {saving ? "Creating..." : "Create Product"}
                                 </button>
                             </form>
 

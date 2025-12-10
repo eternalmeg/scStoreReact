@@ -7,6 +7,7 @@ const adminController = require('./controllers/adminController');
 const reviewController = require('./controllers/reviewController');
 const cartController = require('./controllers/cartController');
 const orderController = require('./controllers/orderController');
+const healthController = require('./controllers/healthController');
 
 
 
@@ -16,6 +17,7 @@ router.use('/reviews', reviewController);
 router.use('/admin', adminController);
 router.use('/cart', cartController);
 router.use('/orders', orderController);
+router.use('/health', healthController);
 
 
 

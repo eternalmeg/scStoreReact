@@ -20,11 +20,27 @@
 @import "./userLayout";
 @import "./orders";
 @import "./sidebar";
+@import "./modals";
+@import "./notFound";
 @import "./main/utils";
+@import "./about";
 
-main {
-  min-height: 60vh;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fz-5-body {
+  flex: 1;
+}
+
 
 
 

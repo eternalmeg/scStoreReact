@@ -8,9 +8,15 @@ import {getLatest} from "../../services/productService.js";
 import Offer from "../../layout/offer/Offer.jsx";
 
 
+
+
+
+
 const Home = () => {
     const [latest, setLatest] = useState([]);
     const [loading, setLoading] = useState(true);
+
+
 
     useEffect(() => {
         getLatest()
@@ -136,10 +142,8 @@ const Home = () => {
                 </div>
             </section>
 
-<Offer />
+            <Offer/>
         </div>
-
-
     );
 };
 
