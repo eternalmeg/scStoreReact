@@ -29,6 +29,10 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if(!formData.firstName || !formData.lastName || !formData.password || !formData.rePassword || !formData.email || !formData.phone ) {
+            return toast.error("no empty fields allowed!")
+        }
+
 
         if (formData.password !== formData.rePassword) {
             return toast.error("Passwords do not match");

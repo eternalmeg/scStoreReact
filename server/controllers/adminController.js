@@ -71,7 +71,7 @@ router.post("/users", isAdmin, async (req, res) => {
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        const hashedPass = await bcrypt.hash(password, 10);
+       // const hashedPass = await bcrypt.hash(password, 10);
 
         const user = await User.create({
             firstName,
@@ -79,7 +79,7 @@ router.post("/users", isAdmin, async (req, res) => {
             email,
             phone,
             role,
-            password: hashedPass,
+            password,
         });
 
         res.status(201).json({
@@ -119,7 +119,7 @@ router.delete('/users/:id', isAdmin, async (req, res) => {
         const userId = req.params.id;
         const currentAdminId = req.user._id.toString();
 
-        // 🚫 Prevent deleting yourself
+        //  Prevent deleting yourself
         if (userId === currentAdminId) {
             return res.status(400).json({ message: "Admin cannot delete themselves." });
         }

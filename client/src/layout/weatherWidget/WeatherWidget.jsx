@@ -4,6 +4,8 @@ export default function WeatherWidget() {
     const [temperature, setTemperature] = useState(null);
     const [weatherCode, setWeatherCode] = useState(null);
     const [city, setCity] = useState("");
+    const [permissionDenied, setPermissionDenied] = useState(false);
+
 
     const icons = {
         0: "☀️",
@@ -24,7 +26,7 @@ export default function WeatherWidget() {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
 
-                // 1️⃣ Fetch weather
+
                 const weatherRes = await fetch(
                     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
                 );
@@ -33,7 +35,7 @@ export default function WeatherWidget() {
                 setTemperature(weatherData.current_weather.temperature);
                 setWeatherCode(weatherData.current_weather.weathercode);
 
-                // 2️⃣ Reverse geocoding → city name
+
                 const geoRes = await fetch(
                     `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
                 );
@@ -42,13 +44,15 @@ export default function WeatherWidget() {
                 setCity(geoData.address.city || geoData.address.town || geoData.address.village || "");
             },
             () => {
-                setCity("Unknown");
-                setTemperature("?");
+                setPermissionDenied(true)
+
             }
         );
     }, []);
 
-    if (!temperature) return null;
+    if (permissionDenied || temperature === null) {
+        return null;
+    }
 
     return (
         <div className="weather-widget">

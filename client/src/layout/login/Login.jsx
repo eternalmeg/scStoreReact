@@ -22,6 +22,10 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if(!formData.email || !formData.password) {
+            return toast.error("No empty fields allowed!")
+        }
+
         try {
             const result = await login(formData);
             saveUser(result);
